@@ -5,7 +5,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LearningProgramming.Domain
 {
     [Table(name: "lessons", Schema = "app-service")]
-    public class Lesson : BaseEntity, IAuditable
+    public class Lesson : BaseEntity, IAuditable, IDeleteable
     {
         [Column("title"), Required, MaxLength(255)]
         public string Title { get; set; }
@@ -17,14 +17,17 @@ namespace LearningProgramming.Domain
         public DateTime CreatedAt { get; set; }
 
         [Column("created_by")]
-        public int CreatedBy { get; set; }
+        public long CreatedBy { get; set; }
 
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
         [Column("updated_by")]
-        public int UpdatedBy { get; set; }
+        public long UpdatedBy { get; set; }
 
         public List<LessonComponent> LessonComponents { get; set; }
+
+        [Column("is_deleted")]
+        public bool IsDeleted { get; set; }
     }
 }

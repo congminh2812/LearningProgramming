@@ -5,10 +5,10 @@ using System.ComponentModel.DataAnnotations.Schema;
 namespace LearningProgramming.Domain
 {
     [Table(name: "lesson_components", Schema = "app-service")]
-    public class LessonComponent : BaseEntity, IAuditable
+    public class LessonComponent : BaseEntity, IAuditable, IDeleteable
     {
         [Column("lesson_id"), Required]
-        public int LessonId { get; set; }
+        public long LessonId { get; set; }
 
         [Column("component_type"), Required]
         public string ComponentType { get; set; }
@@ -24,15 +24,18 @@ namespace LearningProgramming.Domain
         public DateTime CreatedAt { get; set; }
 
         [Column("created_by")]
-        public int CreatedBy { get; set; }
+        public long CreatedBy { get; set; }
 
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
         [Column("updated_by")]
-        public int? UpdatedBy { get; set; }
+        public long? UpdatedBy { get; set; }
 
         [ForeignKey(nameof(LessonId))]
         public Lesson Lesson { get; set; }
+
+        [Column("is_deleted")]
+        public bool IsDeleted { get; set; }
     }
 }

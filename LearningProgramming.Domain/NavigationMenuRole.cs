@@ -7,10 +7,10 @@ namespace LearningProgramming.Domain
     public class NavigationMenuRole
     {
         [Key, Column("navigation_menu_id")]
-        public int NavigationMenuId { get; set; }
+        public long NavigationMenuId { get; set; }
 
         [Key, Column("role_id")]
-        public int RoleId { get; set; }
+        public long RoleId { get; set; }
 
         [ForeignKey(nameof(NavigationMenuId))]
         public virtual NavigationMenu NavigationMenu { get; set; }

@@ -1,12 +1,11 @@
 ﻿using LearningProgramming.Application.Contracts.Persistence;
-using LearningProgramming.Domain.Common;
 using LearningProgramming.Identity.DBContext;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace LearningProgramming.Identity.Repositories
 {
-    public class Repository<T>(LearningProgrammingIdentityDbContext context) : IRepository<T> where T : BaseEntity
+    public class Repository<T>(LearningProgrammingIdentityDbContext context) : IRepository<T> where T : class
     {
         public async Task CreateAsync(T entity)
         {

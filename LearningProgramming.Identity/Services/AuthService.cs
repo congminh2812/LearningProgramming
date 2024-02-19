@@ -25,7 +25,7 @@ namespace LearningProgramming.Identity.Services
             if (!result.Succeeded)
                 throw new BadRequestException($"Creadentials for '{request.Email} aren't valid.'");
 
-            JwtSecurityToken jwtSecurityToken = await GenerateToken(user);
+            var accessToken = await GenerateToken(user);
             var refreshToken = GenerateRefreshToken();
             var now = DateTime.Now;
             var expires = now.AddDays(7);
@@ -42,11 +42,27 @@ namespace LearningProgramming.Identity.Services
             {
                 Id = user.Id,
                 Email = user.Email,
-                AccessToken = new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken),
+                AccessToken = accessToken,
                 RefreshToken = refreshToken,
             };
 
             return response;
+        }
+
+        public async Task<AuthResponse> RefreshToken(TokenRequest request)
+        {
+            var userLogin = await userLoginRepository.GetByRefreshToken(request.RefreshToken);
+
+            if (userLogin is null || userLogin.ExpiresTime <= DateTime.Now)
+                return null;
+
+            return new AuthResponse
+            {
+                Id = userLogin.UserId,
+                Email = userLogin.User.Email,
+                AccessToken = await GenerateToken(userLogin.User),
+                RefreshToken = userLogin.RefreshToken,
+            };
         }
 
         public Task<RegistrationResponse> Register(RegistrationRequest request)
@@ -54,7 +70,7 @@ namespace LearningProgramming.Identity.Services
             throw new NotImplementedException();
         }
 
-        private async Task<JwtSecurityToken> GenerateToken(User user)
+        private async Task<string> GenerateToken(User user)
         {
             var roles = await userService.GetRolesAsync(user);
             var roleClaims = roles.Select(s => new Claim(ClaimTypes.Role, s.Id.ToString())).ToList();
@@ -75,7 +91,7 @@ namespace LearningProgramming.Identity.Services
                 expires: DateTime.UtcNow.AddMinutes(_jwtSettings.DurationInMinutes),
                 signingCredentials: signingCredentials);
 
-            return jwtSecurityToken;
+            return new JwtSecurityTokenHandler().WriteToken(jwtSecurityToken);
         }
 
         private static string GenerateRefreshToken()

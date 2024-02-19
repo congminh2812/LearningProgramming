@@ -11,9 +11,7 @@ namespace LearningProgramming.Identity.Services
     {
         public SignInResult CheckPasswordSignInAsync(User user, string password)
         {
-            string hashedPassword = PasswordManager.GetMd5Hash(password);
-
-            var checkPassword = PasswordManager.VerifyMd5Hash(user.Password, hashedPassword);
+            var checkPassword = PasswordManager.VerifyMd5Hash(password, user.Password);
 
             return new SignInResult { Succeeded = checkPassword };
         }

@@ -1,15 +1,15 @@
 ﻿using LearningProgramming.Domain;
 using LearningProgramming.Domain.Common;
-using LearningProgramming.Identity.Configurations;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearningProgramming.Identity.DBContext
 {
-    public class LearningProgrammingIdentityDbContext(DbContextOptions<LearningProgrammingIdentityDbContext> otions) : DbContext(otions)
+    public class LearningProgrammingIdentityDbContext(DbContextOptions<LearningProgrammingIdentityDbContext> options) : DbContext(options)
     {
         public DbSet<User> Users { get; set; }
         public DbSet<Role> Roles { get; set; }
         public DbSet<UserRole> UserRoles { get; set; }
+        public DbSet<UserLogin> UserLogins { get; set; }
         public DbSet<NavigationMenu> NavigationMenus { get; set; }
         public DbSet<NavigationMenuRole> NavigationMenuRoles { get; set; }
 
@@ -18,10 +18,10 @@ namespace LearningProgramming.Identity.DBContext
             builder.Entity<UserRole>().HasKey(nr => new { nr.UserId, nr.RoleId });
             builder.Entity<NavigationMenuRole>().HasKey(nr => new { nr.NavigationMenuId, nr.RoleId });
 
-            base.OnModelCreating(builder);
-
             builder.ApplyConfigurationsFromAssembly(typeof(LearningProgrammingIdentityDbContext).Assembly);
-            builder.ApplyConfiguration(new UserConfiguration());
+            //builder.ApplyConfiguration(new UserConfiguration());
+
+            base.OnModelCreating(builder);
         }
 
         public override int SaveChanges()

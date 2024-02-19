@@ -8,7 +8,7 @@ namespace LearningProgramming.Domain
     public class UserLogin : BaseEntity
     {
         [Required, Column("user_id")]
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         [Required, Column("provider_key"), MaxLength(36)]
         public string ProviderKey { get; set; }

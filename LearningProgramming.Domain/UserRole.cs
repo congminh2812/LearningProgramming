@@ -7,10 +7,10 @@ namespace LearningProgramming.Domain
     public class UserRole
     {
         [Key, Column("user_id")]
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         [Key, Column("role_id")]
-        public int RoleId { get; set; }
+        public long RoleId { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public virtual User User { get; set; }

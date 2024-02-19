@@ -1,9 +1,8 @@
-﻿using LearningProgramming.Domain.Common;
-using System.Linq.Expressions;
+﻿using System.Linq.Expressions;
 
 namespace LearningProgramming.Application.Contracts.Persistence
 {
-    public interface IRepository<T> where T : BaseEntity
+    public interface IRepository<T> where T : class
     {
         IQueryable<T> GetAll();
         IQueryable<T> GetAll(params Expression<Func<T, object>>[] propertySelectors);

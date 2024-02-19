@@ -7,10 +7,10 @@ namespace LearningProgramming.Domain
     public class UserProgress : BaseEntity, IAuditable
     {
         [Column("user_id")]
-        public int UserId { get; set; }
+        public long UserId { get; set; }
 
         [Column("lesson_id")]
-        public int LessonId { get; set; }
+        public long LessonId { get; set; }
 
         [Column("completed")]
         public bool Completed { get; set; }
@@ -22,13 +22,13 @@ namespace LearningProgramming.Domain
         public DateTime CreatedAt { get; set; }
 
         [Column("created_by")]
-        public int CreatedBy { get; set; }
+        public long CreatedBy { get; set; }
 
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
 
         [Column("updated_by")]
-        public int? UpdatedBy { get; set; }
+        public long? UpdatedBy { get; set; }
 
         [ForeignKey(nameof(UserId))]
         public User User { get; set; }
