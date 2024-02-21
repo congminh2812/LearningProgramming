@@ -27,7 +27,7 @@ namespace LearningProgramming.Identity.Services
 
             var accessToken = await GenerateToken(user);
             var refreshToken = GenerateRefreshToken();
-            var now = DateTime.Now;
+            var now = DateTime.UtcNow;
             var expires = now.AddDays(7);
 
             var userLogin = new UserLogin { ProviderKey = Guid.NewGuid().ToString(), LoginTime = now, ExpiresTime = expires, RefreshToken = refreshToken, UserId = user.Id };

@@ -1,5 +1,6 @@
 ﻿using LearningProgramming.Application.Contracts.Identity;
 using LearningProgramming.Application.Contracts.Persistence;
+using LearningProgramming.Application.Models.Identity;
 using LearningProgramming.Identity.DBContext;
 using LearningProgramming.Identity.Repositories;
 using LearningProgramming.Identity.Services;
@@ -21,6 +22,8 @@ namespace LearningProgramming.Identity
                 options.UseNpgsql(configuration.GetConnectionString("LearningProgrammingConnectionString"));
                 options.EnableSensitiveDataLogging();
             });
+
+            services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
             services.AddScoped<IUnitOfWork, UnitOfWork>();
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
@@ -48,15 +51,6 @@ namespace LearningProgramming.Identity
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(configuration["JwtSettings:Key"])),
                 };
             });
-
-            // Database initialization logic
-            using (var serviceScope = services.BuildServiceProvider().GetService<IServiceScopeFactory>().CreateScope())
-            {
-                var dbContext = serviceScope.ServiceProvider.GetRequiredService<LearningProgrammingIdentityDbContext>();
-                dbContext.Database.EnsureCreated();
-                // Optionally, you can also apply migrations
-                //dbContext.Database.Migrate();
-            }
 
             return services;
         }

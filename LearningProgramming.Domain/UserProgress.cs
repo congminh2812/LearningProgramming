@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LearningProgramming.Domain
 {
-    [Table(name: "books", Schema = "app-service")]
+    [Table(name: "user_progresses", Schema = "app-service")]
     public class UserProgress : BaseEntity, IAuditable
     {
         [Column("user_id")]

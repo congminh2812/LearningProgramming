@@ -14,6 +14,9 @@ namespace LearningProgramming.Persistence.DBContext
 
         protected override void OnModelCreating(ModelBuilder builder)
         {
+            builder.Entity<User>().ToTable("users", "identity-service", t => t.ExcludeFromMigrations());
+            builder.Entity<UserLogin>().ToTable("user_logins", "identity-service", t => t.ExcludeFromMigrations());
+
             base.OnModelCreating(builder);
             builder.ApplyConfigurationsFromAssembly(typeof(LearningProgrammingAppDbContext).Assembly);
         }

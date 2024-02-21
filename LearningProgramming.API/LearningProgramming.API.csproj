@@ -21,6 +21,7 @@
 
   <ItemGroup>
     <ProjectReference Include="..\LearningProgramming.Identity\LearningProgramming.Identity.csproj" />
+    <ProjectReference Include="..\LearningProgramming.Infrastructure\LearningProgramming.Infrastructure.csproj" />
     <ProjectReference Include="..\LearningProgramming.Persistence\LearningProgramming.Persistence.csproj" />
   </ItemGroup>
 
