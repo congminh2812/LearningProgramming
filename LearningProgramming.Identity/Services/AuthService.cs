@@ -1,6 +1,7 @@
 ﻿using LearningProgramming.Application.Contracts.Identity;
 using LearningProgramming.Application.Contracts.Persistence;
 using LearningProgramming.Application.Exceptions;
+using LearningProgramming.Application.Extensions;
 using LearningProgramming.Application.Models.Identity;
 using LearningProgramming.Domain;
 using Microsoft.Extensions.Options;
@@ -12,15 +13,15 @@ using System.Text;
 
 namespace LearningProgramming.Identity.Services
 {
-    public class AuthService(IUserService userService, IOptions<JwtSettings> jwtSettings, IUserLoginRepository userLoginRepository, IUnitOfWork unitOfWork) : IAuthService
+    public class AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtSettings, IUserLoginRepository userLoginRepository, IRoleRepository roleRepository, IUnitOfWork unitOfWork) : IAuthService
     {
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
         public async Task<AuthResponse> Login(AuthRequest request)
         {
-            var user = await userService.FindByEmailAsync(request.Email) ?? throw new NotFoundException($"User with {request.Email} not found", request.Email);
+            var user = await userRepository.FindByEmailAsync(request.Email) ?? throw new NotFoundException($"User with {request.Email} not found", request.Email);
 
-            var result = userService.CheckPasswordSignInAsync(user, request.Password);
+            var result = userRepository.CheckPasswordSignInAsync(user, request.Password);
 
             if (!result.Succeeded)
                 throw new BadRequestException($"Creadentials for '{request.Email} aren't valid.'");
@@ -65,14 +66,23 @@ namespace LearningProgramming.Identity.Services
             };
         }
 
-        public Task<RegistrationResponse> Register(RegistrationRequest request)
+        public async Task<RegistrationResponse> Register(RegistrationRequest request)
         {
-            throw new NotImplementedException();
+            var user = await userRepository.FindByEmailAsync(request.Email);
+            if (user is not null)
+                throw new BadRequestException($"User with {request.Email} existed");
+
+            user = new User { Email = request.Email, FirstName = request.FirstName, LastName = request.LastName, Password = PasswordManager.GetMd5Hash(request.Password) };
+            await userRepository.CreateAsync(user);
+
+            await unitOfWork.SaveChangesAsync();
+
+            return new RegistrationResponse { UserId = user.Id };
         }
 
         private async Task<string> GenerateToken(User user)
         {
-            var roles = await userService.GetRolesAsync(user);
+            var roles = await roleRepository.GetRolesAsync(user);
             var roleClaims = roles.Select(s => new Claim(ClaimTypes.Role, s.Id.ToString())).ToList();
 
             var claims = new[]

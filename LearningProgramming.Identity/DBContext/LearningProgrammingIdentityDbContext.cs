@@ -24,7 +24,7 @@ namespace LearningProgramming.Identity.DBContext
             base.OnModelCreating(builder);
         }
 
-        public override int SaveChanges()
+        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
         {
             var entities = ChangeTracker.Entries().Where(x => x.Entity is IAuditable && (x.State == EntityState.Added || x.State == EntityState.Modified));
 
@@ -36,7 +36,7 @@ namespace LearningProgramming.Identity.DBContext
                 ((IAuditable)entityEntry.Entity).UpdatedAt = DateTime.UtcNow;
             }
 
-            return base.SaveChanges();
+            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

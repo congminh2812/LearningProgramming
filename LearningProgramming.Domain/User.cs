@@ -8,6 +8,7 @@ namespace LearningProgramming.Domain
     public class User : BaseEntity, IAuditable, IDeleteable
     {
         [Column("email"), Required, MaxLength(255)]
+        [EmailAddress]
         public string Email { get; set; }
 
         [Column("password"), Required, MaxLength(255)]
@@ -22,14 +23,8 @@ namespace LearningProgramming.Domain
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
 
-        [Column("created_by")]
-        public long? CreatedBy { get; set; }
-
         [Column("updated_at")]
         public DateTime? UpdatedAt { get; set; }
-
-        [Column("updated_by")]
-        public long? UpdatedBy { get; set; }
 
         [Column("is_deleted")]
         public bool IsDeleted { get; set; }

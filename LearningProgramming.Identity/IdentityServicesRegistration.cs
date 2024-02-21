@@ -29,9 +29,10 @@ namespace LearningProgramming.Identity
             services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
 
             services.AddTransient<IUserLoginRepository, UserLoginRepository>();
+            services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IRoleRepository, RoleRepository>();
 
             services.AddTransient<IAuthService, AuthService>();
-            services.AddTransient<IUserService, UserService>();
 
             services.AddAuthentication(options =>
             {
