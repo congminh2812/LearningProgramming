@@ -1,4 +1,5 @@
 ﻿using LearningProgramming.Application.Contracts.Identity;
+using LearningProgramming.Application.Contracts.Logging;
 using LearningProgramming.Application.Contracts.Persistence;
 using LearningProgramming.Application.Exceptions;
 using LearningProgramming.Application.Extensions;
@@ -13,7 +14,7 @@ using System.Text;
 
 namespace LearningProgramming.Identity.Services
 {
-    public class AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtSettings, IUserLoginRepository userLoginRepository, IRoleRepository roleRepository, IUnitOfWork unitOfWork) : IAuthService
+    public class AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtSettings, IUserLoginRepository userLoginRepository, IRoleRepository roleRepository, IUnitOfWork unitOfWork, IAppLogger<AuthService> logger) : IAuthService
     {
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
@@ -38,6 +39,8 @@ namespace LearningProgramming.Identity.Services
                 userLoginRepository.Update(userLogin);
 
             await unitOfWork.SaveChangesAsync();
+
+            logger.LogInformation($"User {user.Email} log in successfully");
 
             var response = new AuthResponse
             {
@@ -76,6 +79,8 @@ namespace LearningProgramming.Identity.Services
             await userRepository.CreateAsync(user);
 
             await unitOfWork.SaveChangesAsync();
+
+            logger.LogInformation($"Register with {user.Email} successfully");
 
             return new RegistrationResponse { UserId = user.Id };
         }

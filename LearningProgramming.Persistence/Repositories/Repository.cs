@@ -1,55 +1,46 @@
 ﻿using LearningProgramming.Application.Contracts.Persistence;
+using LearningProgramming.Persistence.DBContext;
+using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
 namespace LearningProgramming.Persistence.Repositories
 {
-    public class Repository<T> : IRepository<T> where T : class
+    public class Repository<T>(LearningProgrammingAppDbContext context) : IRepository<T> where T : class
     {
-        public Repository() { }
-
-        public Task CreateAsync(T entity)
+        public async Task CreateAsync(T entity)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task DeleteAsync(T entity)
-        {
-            throw new NotImplementedException();
+            await context.AddAsync(entity);
         }
 
         public IQueryable<T> GetAll()
         {
-            throw new NotImplementedException();
+            return context.Set<T>();
         }
 
         public IQueryable<T> GetAll(params Expression<Func<T, object>>[] propertySelectors)
         {
-            throw new NotImplementedException();
+            var query = GetAll();
+
+            if (propertySelectors is not null)
+                foreach (var propertySelector in propertySelectors)
+                    query = query.Include(propertySelector);
+
+            return query;
         }
 
         public IQueryable<T> GetAll(Expression<Func<T, bool>> predicate, params Expression<Func<T, object>>[] propertySelectors)
         {
-            throw new NotImplementedException();
+            return GetAll(propertySelectors).Where(predicate);
         }
 
-        public Task<IEnumerable<T>> GetAllAsync()
+        public async Task<T> GetByIdAsync(int id)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task<T> GetByIdAsync(int id)
-        {
-            throw new NotImplementedException();
+            return await context.FindAsync<T>(id);
         }
 
         public void Update(T entity)
         {
-            throw new NotImplementedException();
-        }
-
-        public Task UpdateAsync(T entity)
-        {
-            throw new NotImplementedException();
+            context.Update(entity);
         }
     }
 }
