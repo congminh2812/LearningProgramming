@@ -26,5 +26,9 @@ namespace LearningProgramming.Domain
 
         [Column("is_deleted")]
         public bool IsDeleted { get; set; }
+
+        public List<NavigationMenuRole> NavigationMenuRoles { get; set; }
+
+        public List<UserRole> UserRoles { get; set; }
     }
 }

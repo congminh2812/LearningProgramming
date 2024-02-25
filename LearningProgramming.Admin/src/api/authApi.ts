@@ -13,6 +13,12 @@ const AuthApi = {
 
   return response.data
  },
+
+ getNewAccessToken: async (refreshToken: string) => {
+  const response = await axiosClient.get(`/auth/getNewAccessToken?refreshToken=${refreshToken}`)
+
+  return response.data
+ },
 }
 
 export default AuthApi

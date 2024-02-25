@@ -44,8 +44,6 @@ namespace LearningProgramming.Identity.Services
 
             var response = new AuthResponse
             {
-                Id = user.Id,
-                Email = user.Email,
                 AccessToken = accessToken,
                 RefreshToken = refreshToken,
             };
@@ -53,17 +51,15 @@ namespace LearningProgramming.Identity.Services
             return response;
         }
 
-        public async Task<AuthResponse> RefreshToken(TokenRequest request)
+        public async Task<AuthResponse> GetNewAccessToken(string refreshToken)
         {
-            var userLogin = await userLoginRepository.GetByRefreshToken(request.RefreshToken);
+            var userLogin = await userLoginRepository.GetByRefreshToken(refreshToken);
 
             if (userLogin is null || userLogin.ExpiresTime <= DateTime.Now)
                 return null;
 
             return new AuthResponse
             {
-                Id = userLogin.UserId,
-                Email = userLogin.User.Email,
                 AccessToken = await GenerateToken(userLogin.User),
                 RefreshToken = userLogin.RefreshToken,
             };
@@ -94,6 +90,7 @@ namespace LearningProgramming.Identity.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sid, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
             }.Union(roleClaims);
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));

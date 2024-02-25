@@ -23,7 +23,7 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningProgramming.Infrast
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningProgramming.Identity", "LearningProgramming.Identity\LearningProgramming.Identity.csproj", "{9C78CB4F-F108-403F-88D2-2998DEC86C03}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "LearningProgramming.Persistence", "LearningProgramming.Persistence\LearningProgramming.Persistence.csproj", "{BD342860-F38E-4B08-908D-031DD3959D1A}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "LearningProgramming.Persistence", "LearningProgramming.Persistence\LearningProgramming.Persistence.csproj", "{BD342860-F38E-4B08-908D-031DD3959D1A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

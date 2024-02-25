@@ -7,6 +7,9 @@ namespace LearningProgramming.Domain
     [Table(name: "navigation_menus", Schema = "identity-service")]
     public class NavigationMenu : BaseEntity, IAuditable, IDeleteable
     {
+        [Column("parent_id")]
+        public long? ParentId { get; set; }
+
         [Column("name"), Required]
         public string Name { get; set; }
 
@@ -15,6 +18,9 @@ namespace LearningProgramming.Domain
 
         [Column("icon")]
         public string Icon { get; set; }
+
+        [Column("position")]
+        public int Position { get; set; }
 
         [Column("created_at")]
         public DateTime CreatedAt { get; set; }
@@ -30,5 +36,10 @@ namespace LearningProgramming.Domain
 
         [Column("is_deleted")]
         public bool IsDeleted { get; set; }
+
+        [ForeignKey(nameof(ParentId))]
+        public NavigationMenu ParentNavigationMenu { get; set; }
+
+        public List<NavigationMenuRole> NavigationMenuRoles { get; set; }
     }
 }

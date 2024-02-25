@@ -1,7 +1,8 @@
+import AuthApi from 'api/authApi'
 import { TokenModel } from 'models/Auth'
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
-import { useNavigate } from 'react-router-dom'
 import LocalStorageService from 'services/LocalStorageService'
+import StorageKeys from 'utils/storage-key'
 
 interface AuthContextType {
  isLoggedIn: boolean
@@ -19,21 +20,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
  const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
 
  useEffect(() => {
-  const accessToken = LocalStorageService.get('accessToken')
-  setIsLoggedIn(accessToken !== undefined)
+  const currentDate = new Date().getTime()
+  const accessToken = LocalStorageService.get(StorageKeys.ACCESS_TOKEN)
+  const refreshToken = LocalStorageService.get(StorageKeys.REFRESH_TOKEN)
+  const accessTokenExpired = LocalStorageService.get(StorageKeys.ACCESS_TOKEN_EXPIRED)
+
+  if (!accessToken || !accessTokenExpired || !refreshToken) {
+   setIsLoggedIn(false)
+   return
+  }
+
+  if (parseInt(accessTokenExpired) * 1000 >= currentDate) setIsLoggedIn(true)
+  else {
+   AuthApi.getNewAccessToken(refreshToken)
+    .then((res) => {
+     setDataLocalStorage(res)
+    })
+    .catch(() => {
+     logout()
+    })
+  }
  }, [])
 
  const login = (token: TokenModel) => {
-  console.log(parseAccessToken(token.accessToken))
-  LocalStorageService.set('accessToken', token.accessToken)
-  LocalStorageService.set('refreshToken', token.refreshToken)
-  setIsLoggedIn(true)
+  setDataLocalStorage(token)
  }
 
  const logout = () => {
-  LocalStorageService.set('accessToken', '')
-  LocalStorageService.set('refreshToken', '')
+  const persistent = LocalStorageService.get(StorageKeys.PERSISTENT) || 'false'
+  if (persistent === 'false') LocalStorageService.set(StorageKeys.EMAIL, '')
+
+  LocalStorageService.set(StorageKeys.ACCESS_TOKEN, '')
+  LocalStorageService.set(StorageKeys.REFRESH_TOKEN, '')
+
+  LocalStorageService.set(StorageKeys.USER_ID, '')
+  LocalStorageService.set(StorageKeys.NAME, '')
+  LocalStorageService.set(StorageKeys.ACCESS_TOKEN_EXPIRED, '')
   setIsLoggedIn(false)
+ }
+
+ const setDataLocalStorage = (token: TokenModel) => {
+  const data = parseAccessToken(token.accessToken)
+  if (data) {
+   LocalStorageService.set(StorageKeys.EMAIL, data.email)
+   LocalStorageService.set(StorageKeys.USER_ID, data.sid)
+   LocalStorageService.set(StorageKeys.NAME, data.name)
+   LocalStorageService.set(StorageKeys.ACCESS_TOKEN_EXPIRED, data.exp)
+  }
+  LocalStorageService.set(StorageKeys.ACCESS_TOKEN, token.accessToken)
+  LocalStorageService.set(StorageKeys.REFRESH_TOKEN, token.refreshToken)
+  setIsLoggedIn(true)
  }
 
  const value: AuthContextType = {

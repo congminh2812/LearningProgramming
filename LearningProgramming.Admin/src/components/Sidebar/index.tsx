@@ -1,37 +1,28 @@
-import * as React from 'react'
-import GlobalStyles from '@mui/joy/GlobalStyles'
+import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded'
+import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded'
+import GroupRoundedIcon from '@mui/icons-material/GroupRounded'
+import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
+import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded'
 import Avatar from '@mui/joy/Avatar'
 import Box from '@mui/joy/Box'
-import Button from '@mui/joy/Button'
-import Card from '@mui/joy/Card'
-import Chip from '@mui/joy/Chip'
 import Divider from '@mui/joy/Divider'
+import GlobalStyles from '@mui/joy/GlobalStyles'
 import IconButton from '@mui/joy/IconButton'
-import Input from '@mui/joy/Input'
-import LinearProgress from '@mui/joy/LinearProgress'
 import List from '@mui/joy/List'
 import ListItem from '@mui/joy/ListItem'
 import ListItemButton, { listItemButtonClasses } from '@mui/joy/ListItemButton'
 import ListItemContent from '@mui/joy/ListItemContent'
-import Typography from '@mui/joy/Typography'
 import Sheet from '@mui/joy/Sheet'
-import Stack from '@mui/joy/Stack'
-import SearchRoundedIcon from '@mui/icons-material/SearchRounded'
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
-import DashboardRoundedIcon from '@mui/icons-material/DashboardRounded'
-import ShoppingCartRoundedIcon from '@mui/icons-material/ShoppingCartRounded'
-import AssignmentRoundedIcon from '@mui/icons-material/AssignmentRounded'
-import QuestionAnswerRoundedIcon from '@mui/icons-material/QuestionAnswerRounded'
-import GroupRoundedIcon from '@mui/icons-material/GroupRounded'
-import SupportRoundedIcon from '@mui/icons-material/SupportRounded'
-import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded'
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded'
-import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
-import BrightnessAutoRoundedIcon from '@mui/icons-material/BrightnessAutoRounded'
-import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
+import Typography from '@mui/joy/Typography'
+import * as React from 'react'
 
+import { useAuth } from 'components/AuthProvider'
 import ColorSchemeToggle from 'components/ColorSchemeToggle'
+import { useNavigate } from 'react-router-dom'
+import LocalStorageService from 'services/LocalStorageService'
 import { closeSidebar } from 'utils/sidebar'
+import StorageKeys from 'utils/storage-key'
 
 function Toggler({
  defaultExpanded = false,
@@ -43,6 +34,7 @@ function Toggler({
  renderToggle: (params: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) => React.ReactNode
 }) {
  const [open, setOpen] = React.useState(defaultExpanded)
+
  return (
   <React.Fragment>
    {renderToggle({ open, setOpen })}
@@ -63,6 +55,16 @@ function Toggler({
 }
 
 export default function Sidebar() {
+ const auth = useAuth()
+ const navigate = useNavigate()
+ const email = LocalStorageService.get(StorageKeys.EMAIL)
+ const name = LocalStorageService.get(StorageKeys.NAME)
+
+ const handleLogout = () => {
+  auth.logout()
+  navigate('/login')
+ }
+
  return (
   <Sheet
    className='Sidebar'
@@ -123,14 +125,9 @@ export default function Sidebar() {
     >
      <BrightnessAutoRoundedIcon />
     </IconButton>
-    <Typography level='title-lg'>Acme Co.</Typography>
+    <Typography level='title-lg'>CM Dev</Typography>
     <ColorSchemeToggle sx={{ ml: 'auto' }} />
    </Box>
-   <Input
-    size='sm'
-    startDecorator={<SearchRoundedIcon />}
-    placeholder='Search'
-   />
    <Box
     sx={{
      minHeight: 0,
@@ -152,78 +149,11 @@ export default function Sidebar() {
      }}
     >
      <ListItem>
-      <ListItemButton>
-       <HomeRoundedIcon />
-       <ListItemContent>
-        <Typography level='title-sm'>Home</Typography>
-       </ListItemContent>
-      </ListItemButton>
-     </ListItem>
-
-     <ListItem>
-      <ListItemButton>
+      <ListItemButton selected>
        <DashboardRoundedIcon />
        <ListItemContent>
         <Typography level='title-sm'>Dashboard</Typography>
        </ListItemContent>
-      </ListItemButton>
-     </ListItem>
-
-     <ListItem>
-      <ListItemButton selected>
-       <ShoppingCartRoundedIcon />
-       <ListItemContent>
-        <Typography level='title-sm'>Orders</Typography>
-       </ListItemContent>
-      </ListItemButton>
-     </ListItem>
-
-     <ListItem nested>
-      <Toggler
-       renderToggle={({ open, setOpen }) => (
-        <ListItemButton onClick={() => setOpen(!open)}>
-         <AssignmentRoundedIcon />
-         <ListItemContent>
-          <Typography level='title-sm'>Tasks</Typography>
-         </ListItemContent>
-         <KeyboardArrowDownIcon sx={{ transform: open ? 'rotate(180deg)' : 'none' }} />
-        </ListItemButton>
-       )}
-      >
-       <List sx={{ gap: 0.5 }}>
-        <ListItem sx={{ mt: 0.5 }}>
-         <ListItemButton>All tasks</ListItemButton>
-        </ListItem>
-        <ListItem>
-         <ListItemButton>Backlog</ListItemButton>
-        </ListItem>
-        <ListItem>
-         <ListItemButton>In progress</ListItemButton>
-        </ListItem>
-        <ListItem>
-         <ListItemButton>Done</ListItemButton>
-        </ListItem>
-       </List>
-      </Toggler>
-     </ListItem>
-
-     <ListItem>
-      <ListItemButton
-       role='menuitem'
-       component='a'
-       href='/joy-ui/getting-started/templates/messages/'
-      >
-       <QuestionAnswerRoundedIcon />
-       <ListItemContent>
-        <Typography level='title-sm'>Messages</Typography>
-       </ListItemContent>
-       <Chip
-        size='sm'
-        color='primary'
-        variant='solid'
-       >
-        4
-       </Chip>
       </ListItemButton>
      </ListItem>
 
@@ -272,48 +202,11 @@ export default function Sidebar() {
     >
      <ListItem>
       <ListItemButton>
-       <SupportRoundedIcon />
-       Support
-      </ListItemButton>
-     </ListItem>
-     <ListItem>
-      <ListItemButton>
        <SettingsRoundedIcon />
        Settings
       </ListItemButton>
      </ListItem>
     </List>
-    <Card
-     invertedColors
-     variant='soft'
-     color='warning'
-     size='sm'
-     sx={{ boxShadow: 'none' }}
-    >
-     <Stack
-      direction='row'
-      justifyContent='space-between'
-      alignItems='center'
-     >
-      <Typography level='title-sm'>Used space</Typography>
-      <IconButton size='sm'>
-       <CloseRoundedIcon />
-      </IconButton>
-     </Stack>
-     <Typography level='body-xs'>Your team has used 80% of your available space. Need more?</Typography>
-     <LinearProgress
-      variant='outlined'
-      value={80}
-      determinate
-      sx={{ my: 1 }}
-     />
-     <Button
-      size='sm'
-      variant='solid'
-     >
-      Upgrade plan
-     </Button>
-    </Card>
    </Box>
    <Divider />
    <Box sx={{ display: 'flex', gap: 1, alignItems: 'center' }}>
@@ -323,13 +216,14 @@ export default function Sidebar() {
      src='https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=286'
     />
     <Box sx={{ minWidth: 0, flex: 1 }}>
-     <Typography level='title-sm'>Siriwat K.</Typography>
-     <Typography level='body-xs'>siriwatk@test.com</Typography>
+     <Typography level='title-sm'>{name}</Typography>
+     <Typography level='body-xs'>{email}</Typography>
     </Box>
     <IconButton
      size='sm'
      variant='plain'
      color='neutral'
+     onClick={handleLogout}
     >
      <LogoutRoundedIcon />
     </IconButton>

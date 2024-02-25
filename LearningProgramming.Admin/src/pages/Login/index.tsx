@@ -18,8 +18,12 @@ import AuthApi from 'api/authApi'
 import { useAuth } from 'components/AuthProvider'
 import ColorSchemeToggle from 'components/ColorSchemeToggle'
 import { LoginModel } from 'models/Auth'
-import * as React from 'react'
 import { useNavigate } from 'react-router-dom'
+import React, { useEffect, useState } from 'react'
+import { CircularProgress } from '@mui/joy'
+import LocalStorageService from 'services/LocalStorageService'
+import StorageKeys from 'utils/storage-key'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 
 const GoogleIcon = () => {
  return (
@@ -46,22 +50,48 @@ const GoogleIcon = () => {
  )
 }
 
-interface FormElements extends HTMLFormControlsCollection {
- email: HTMLInputElement
- password: HTMLInputElement
- persistent: HTMLInputElement
-}
-interface SignInFormElement extends HTMLFormElement {
- readonly elements: FormElements
-}
-
 export default function LoginPage() {
+ const email = LocalStorageService.get(StorageKeys.EMAIL) || ''
+ const password = LocalStorageService.get(StorageKeys.PASSWORD) || ''
+ const persistent = LocalStorageService.get(StorageKeys.PERSISTENT) || 'false'
+ const [loading, setLoading] = useState(false)
  const navigate = useNavigate()
  const auth = useAuth()
-
- React.useEffect(() => {
-  if (auth.isLoggedIn) navigate('/dashboard')
+ const { handleSubmit, register, control } = useForm({
+  defaultValues: { email, password, persistent: persistent === 'true' },
  })
+
+ useEffect(() => {
+  if (auth.isLoggedIn) {
+   navigate('/')
+  }
+ }, [auth.isLoggedIn, navigate])
+
+ const onSubmit: SubmitHandler<LoginModel> = (data) => {
+  setLoading(true)
+  AuthApi.login(data).then((res) => {
+   setLoading(false)
+   auth.login(res)
+
+   LocalStorageService.set(StorageKeys.PERSISTENT, data.persistent ? 'true' : 'false')
+   if (data.persistent) LocalStorageService.set(StorageKeys.PASSWORD, data.password)
+
+   navigate('/')
+  })
+ }
+
+ if (auth.isLoggedIn)
+  return (
+   <Box
+    width={'100vw'}
+    height={'100vh'}
+    display={'flex'}
+    alignItems={'center'}
+    justifyContent={'center'}
+   >
+    <CircularProgress variant='solid' />
+   </Box>
+  )
 
  return (
   <CssVarsProvider
@@ -160,24 +190,7 @@ export default function LoginPage() {
         >
          Sign in
         </Typography>
-        <Typography level='body-sm'>
-         New to company?{' '}
-         <Link
-          href='#replace-with-a-link'
-          level='title-sm'
-         >
-          Sign up!
-         </Link>
-        </Typography>
        </Stack>
-       <Button
-        variant='soft'
-        color='neutral'
-        fullWidth
-        startDecorator={<GoogleIcon />}
-       >
-        Continue with Google
-       </Button>
       </Stack>
       <Divider
        sx={(theme) => ({
@@ -189,42 +202,24 @@ export default function LoginPage() {
          },
         },
        })}
-      >
-       or
-      </Divider>
+      ></Divider>
       <Stack
        gap={4}
        sx={{ mt: 2 }}
       >
-       <form
-        onSubmit={(event: React.FormEvent<SignInFormElement>) => {
-         event.preventDefault()
-         const formElements = event.currentTarget.elements
-         const data: LoginModel = {
-          email: formElements.email.value,
-          password: formElements.password.value,
-          persistent: formElements.persistent.checked,
-         }
-
-         AuthApi.login(data).then((res) => {
-          console.log(res)
-          auth.login(res.accessToken)
-          navigate('/dashboard')
-         })
-        }}
-       >
+       <form onSubmit={handleSubmit(onSubmit)}>
         <FormControl required>
          <FormLabel>Email</FormLabel>
          <Input
           type='email'
-          name='email'
+          {...register('email')}
          />
         </FormControl>
         <FormControl required>
          <FormLabel>Password</FormLabel>
          <Input
           type='password'
-          name='password'
+          {...register('password')}
          />
         </FormControl>
         <Stack
@@ -238,10 +233,17 @@ export default function LoginPage() {
            alignItems: 'center',
           }}
          >
-          <Checkbox
-           size='sm'
-           label='Remember me'
+          <Controller
            name='persistent'
+           control={control}
+           render={({ field }) => (
+            <Checkbox
+             size='sm'
+             label='Remember me'
+             checked={field.value}
+             onChange={field.onChange}
+            />
+           )}
           />
           <Link
            level='title-sm'
@@ -253,6 +255,7 @@ export default function LoginPage() {
          <Button
           type='submit'
           fullWidth
+          loading={loading}
          >
           Sign in
          </Button>

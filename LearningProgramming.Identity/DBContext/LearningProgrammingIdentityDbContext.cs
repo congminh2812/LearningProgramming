@@ -1,5 +1,4 @@
 ﻿using LearningProgramming.Domain;
-using LearningProgramming.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearningProgramming.Identity.DBContext
@@ -19,24 +18,8 @@ namespace LearningProgramming.Identity.DBContext
             builder.Entity<NavigationMenuRole>().HasKey(nr => new { nr.NavigationMenuId, nr.RoleId });
 
             builder.ApplyConfigurationsFromAssembly(typeof(LearningProgrammingIdentityDbContext).Assembly);
-            //builder.ApplyConfiguration(new UserConfiguration());
 
             base.OnModelCreating(builder);
-        }
-
-        public override Task<int> SaveChangesAsync(CancellationToken cancellationToken = default)
-        {
-            var entities = ChangeTracker.Entries().Where(x => x.Entity is IAuditable && (x.State == EntityState.Added || x.State == EntityState.Modified));
-
-            foreach (var entityEntry in entities)
-            {
-                if (entityEntry.State == EntityState.Added)
-                    ((IAuditable)entityEntry.Entity).CreatedAt = DateTime.UtcNow;
-
-                ((IAuditable)entityEntry.Entity).UpdatedAt = DateTime.UtcNow;
-            }
-
-            return base.SaveChangesAsync(cancellationToken);
         }
     }
 }

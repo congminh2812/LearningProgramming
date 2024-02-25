@@ -25,13 +25,14 @@ namespace LearningProgramming.Identity
 
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-            services.AddScoped<IUnitOfWork, UnitOfWork>();
-            services.AddScoped(typeof(IRepository<>), typeof(Repository<>));
+            services.AddScoped<IUnitOfWork, IdentityUnitOfWork>();
 
             services.AddTransient<IUserLoginRepository, UserLoginRepository>();
             services.AddTransient<IUserRepository, UserRepository>();
+            services.AddTransient<IUserRoleRepository, UserRoleRepository>();
             services.AddTransient<IRoleRepository, RoleRepository>();
-
+            services.AddTransient<INavigationMenuRepository, NavigationMenuRepository>();
+            services.AddTransient<INavigationMenuRoleRepository, NavigationMenuRoleRepository>();
             services.AddTransient<IAuthService, AuthService>();
 
             services.AddAuthentication(options =>

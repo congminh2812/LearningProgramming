@@ -1,4 +1,5 @@
-﻿using LearningProgramming.Domain;
+﻿using LearningProgramming.Application.Enums;
+using LearningProgramming.Domain;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Metadata.Builders;
 
@@ -13,7 +14,7 @@ namespace LearningProgramming.Identity.Configurations
                 {
                     new() {
                         Id = 1,
-                        Name = "Admin",
+                        Name = RolesEnum.ADMIN.ToString(),
                         Description = "Admin management system",
                         CreatedAt = DateTime.UtcNow,
                         CreatedBy = 1

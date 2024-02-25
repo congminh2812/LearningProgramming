@@ -1,11 +1,12 @@
 ﻿using LearningProgramming.Application.Contracts.Persistence;
+using LearningProgramming.Application.Persistence;
 using LearningProgramming.Domain;
 using LearningProgramming.Identity.DBContext;
 using Microsoft.EntityFrameworkCore;
 
 namespace LearningProgramming.Identity.Repositories
 {
-    public class RoleRepository(LearningProgrammingIdentityDbContext context) : Repository<Role>(context), IRoleRepository
+    public class RoleRepository(LearningProgrammingIdentityDbContext context) : Repository<Role, LearningProgrammingIdentityDbContext>(context), IRoleRepository
     {
         public async Task<List<Role>> GetRolesAsync(User user)
         {
