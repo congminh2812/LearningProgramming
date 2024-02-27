@@ -15,10 +15,11 @@ import ListItemButton, { listItemButtonClasses } from '@mui/joy/ListItemButton'
 import ListItemContent from '@mui/joy/ListItemContent'
 import Sheet from '@mui/joy/Sheet'
 import Typography from '@mui/joy/Typography'
-import * as React from 'react'
+import NavigationMenuApi from 'api/navigationMenuApi'
 
 import { useAuth } from 'components/AuthProvider'
 import ColorSchemeToggle from 'components/ColorSchemeToggle'
+import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LocalStorageService from 'services/LocalStorageService'
 import { closeSidebar } from 'utils/sidebar'
@@ -30,13 +31,13 @@ function Toggler({
  children,
 }: {
  defaultExpanded?: boolean
- children: React.ReactNode
- renderToggle: (params: { open: boolean; setOpen: React.Dispatch<React.SetStateAction<boolean>> }) => React.ReactNode
+ children: ReactNode
+ renderToggle: (params: { open: boolean; setOpen: Dispatch<SetStateAction<boolean>> }) => ReactNode
 }) {
- const [open, setOpen] = React.useState(defaultExpanded)
+ const [open, setOpen] = useState(defaultExpanded)
 
  return (
-  <React.Fragment>
+  <>
    {renderToggle({ open, setOpen })}
    <Box
     sx={{
@@ -50,15 +51,38 @@ function Toggler({
    >
     {children}
    </Box>
-  </React.Fragment>
+  </>
  )
 }
 
+const IconMenu = (icon: string) => {
+ switch (icon) {
+  case 'dashboard':
+   return <DashboardRoundedIcon />
+  case 'user':
+   return <GroupRoundedIcon />
+  default:
+   return <DashboardRoundedIcon />
+ }
+}
+
 export default function Sidebar() {
+ const [menus, setMenus] = useState([])
  const auth = useAuth()
  const navigate = useNavigate()
  const email = LocalStorageService.get(StorageKeys.EMAIL)
  const name = LocalStorageService.get(StorageKeys.NAME)
+ const pathname = window.location.pathname
+ console.log(pathname)
+ useEffect(() => {
+  NavigationMenuApi.getNavigationMenus()
+   .then((res) => {
+    setMenus(res)
+   })
+   .catch((e) => {
+    console.error(e)
+   })
+ }, [])
 
  const handleLogout = () => {
   auth.logout()
@@ -148,46 +172,53 @@ export default function Sidebar() {
       '--ListItem-radius': (theme) => theme.vars.radius.sm,
      }}
     >
-     <ListItem>
-      <ListItemButton selected>
-       <DashboardRoundedIcon />
-       <ListItemContent>
-        <Typography level='title-sm'>Dashboard</Typography>
-       </ListItemContent>
-      </ListItemButton>
-     </ListItem>
-
-     <ListItem nested>
-      <Toggler
-       renderToggle={({ open, setOpen }) => (
-        <ListItemButton onClick={() => setOpen(!open)}>
-         <GroupRoundedIcon />
-         <ListItemContent>
-          <Typography level='title-sm'>Users</Typography>
-         </ListItemContent>
-         <KeyboardArrowDownIcon sx={{ transform: open ? 'rotate(180deg)' : 'none' }} />
-        </ListItemButton>
-       )}
-      >
-       <List sx={{ gap: 0.5 }}>
-        <ListItem sx={{ mt: 0.5 }}>
+     {menus.map((menu: any) => (
+      <>
+       {menu.children.length === 0 && (
+        <ListItem key={menu.id}>
          <ListItemButton
-          role='menuitem'
-          component='a'
-          href='/joy-ui/getting-started/templates/profile-dashboard/'
+          selected={pathname === menu.url}
+          onClick={() => navigate(menu.url)}
          >
-          My profile
+          {IconMenu(menu.icon)}
+          <ListItemContent>
+           <Typography level='title-sm'>{menu.name}</Typography>
+          </ListItemContent>
          </ListItemButton>
         </ListItem>
-        <ListItem>
-         <ListItemButton>Create a new user</ListItemButton>
+       )}
+
+       {menu.children.length > 0 && (
+        <ListItem
+         key={menu.id}
+         nested
+        >
+         <Toggler
+          renderToggle={({ open, setOpen }) => (
+           <ListItemButton onClick={() => setOpen(!open)}>
+            {IconMenu(menu.icon)}
+            <ListItemContent>
+             <Typography level='title-sm'>{menu.name}</Typography>
+            </ListItemContent>
+            <KeyboardArrowDownIcon sx={{ transform: open ? 'rotate(180deg)' : 'none' }} />
+           </ListItemButton>
+          )}
+         >
+          <List sx={{ gap: 0.5 }}>
+           {menu.children.map((x: any) => (
+            <ListItem
+             key={x.id}
+             sx={{ mt: 0.5 }}
+            >
+             <ListItemButton onClick={() => navigate(x.url)}>{x.name}</ListItemButton>
+            </ListItem>
+           ))}
+          </List>
+         </Toggler>
         </ListItem>
-        <ListItem>
-         <ListItemButton>Roles & permission</ListItemButton>
-        </ListItem>
-       </List>
-      </Toggler>
-     </ListItem>
+       )}
+      </>
+     ))}
     </List>
 
     <List

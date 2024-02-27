@@ -10,7 +10,13 @@ namespace LearningProgramming.Application.Features.NavigationMenu.Queries
         public async Task<List<NavigationMenuDto>> Handle(GetNavigationMenusQuery request, CancellationToken cancellationToken)
         {
             var data = await navigationMenuRepository.GetMenusByUserIdAsync(request.UserId);
-            var dataDto = mapper.Map<List<NavigationMenuDto>>(data);
+            var dataDto = mapper.Map<List<NavigationMenuDto>>(data.Where(x => x.ParentId is null));
+
+            dataDto.ForEach(x =>
+            {
+                var children = mapper.Map<List<NavigationMenuDto>>(data.Where(d => d.ParentId == x.Id).ToList());
+                x.Children = children;
+            });
 
             return dataDto;
         }

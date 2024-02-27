@@ -3,6 +3,7 @@ import { TokenModel } from 'models/Auth'
 import React, { createContext, useContext, useState, ReactNode, useEffect } from 'react'
 import LocalStorageService from 'services/LocalStorageService'
 import StorageKeys from 'utils/storage-key'
+import { decodeAccessToken } from 'utils/token'
 
 interface AuthContextType {
  isLoggedIn: boolean
@@ -60,7 +61,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
  }
 
  const setDataLocalStorage = (token: TokenModel) => {
-  const data = parseAccessToken(token.accessToken)
+  const data = decodeAccessToken(token.accessToken)
   if (data) {
    LocalStorageService.set(StorageKeys.EMAIL, data.email)
    LocalStorageService.set(StorageKeys.USER_ID, data.sid)
@@ -87,16 +88,4 @@ export const useAuth = (): AuthContextType => {
   throw new Error('useAuth must be used within an AuthProvider')
  }
  return context
-}
-
-const parseAccessToken = (accessToken: string): { [key: string]: any } | null => {
- try {
-  const payloadBase64 = accessToken.split('.')[1]
-  const decodedPayload = atob(payloadBase64)
-  const parsedPayload = JSON.parse(decodedPayload)
-  return parsedPayload
- } catch (error) {
-  console.error('Error parsing access token:', error)
-  return null
- }
 }
