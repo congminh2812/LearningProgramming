@@ -1,4 +1,4 @@
-﻿namespace LearningProgramming.Application.Contracts.Persistence
+﻿namespace LearningProgramming.Application.Contracts.Common
 {
     public interface IUnitOfWork : IDisposable
     {

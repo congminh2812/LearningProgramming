@@ -1,10 +1,9 @@
-﻿using LearningProgramming.Application.Contracts.Persistence;
-using LearningProgramming.Application.Exceptions;
+﻿using LearningProgramming.Application.Exceptions;
 using LearningProgramming.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 using System.Linq.Expressions;
 
-namespace LearningProgramming.Application.Persistence
+namespace LearningProgramming.Application.Contracts.Common
 {
     public abstract class Repository<TEntity, TContext>(TContext context) : IRepository<TEntity> where TEntity : class where TContext : DbContext
     {

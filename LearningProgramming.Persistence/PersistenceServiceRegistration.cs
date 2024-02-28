@@ -1,4 +1,5 @@
 ﻿using LearningProgramming.Application.Contracts.Persistence;
+using LearningProgramming.Application.Contracts.Persistence.Repositories;
 using LearningProgramming.Identity.Repositories;
 using LearningProgramming.Persistence.DBContext;
 using LearningProgramming.Persistence.Repositories;
@@ -18,7 +19,7 @@ namespace LearningProgramming.Persistence
                 options.UseNpgsql(configuration.GetConnectionString("LearningProgrammingConnectionString"));
             });
 
-            services.AddScoped<IUnitOfWork, PersistenceUnitOfWork>();
+            services.AddScoped<IPersistenceUnitOfWork, PersistenceUnitOfWork>();
 
             services.AddTransient<IBookRepository, BookRepository>();
             services.AddTransient<IChapterRepository, ChapterRepository>();

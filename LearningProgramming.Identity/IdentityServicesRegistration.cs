@@ -1,5 +1,6 @@
 ﻿using LearningProgramming.Application.Contracts.Identity;
-using LearningProgramming.Application.Contracts.Persistence;
+using LearningProgramming.Application.Contracts.Identity.Repositories;
+using LearningProgramming.Application.Contracts.Identity.Services;
 using LearningProgramming.Application.Models.Identity;
 using LearningProgramming.Identity.DBContext;
 using LearningProgramming.Identity.Repositories;
@@ -25,7 +26,7 @@ namespace LearningProgramming.Identity
 
             services.Configure<JwtSettings>(configuration.GetSection("JwtSettings"));
 
-            services.AddScoped<IUnitOfWork, IdentityUnitOfWork>();
+            services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
 
             services.AddTransient<IUserLoginRepository, UserLoginRepository>();
             services.AddTransient<IUserRepository, UserRepository>();

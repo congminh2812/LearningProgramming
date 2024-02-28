@@ -1,6 +1,7 @@
 ﻿using LearningProgramming.Application.Contracts.Identity;
+using LearningProgramming.Application.Contracts.Identity.Repositories;
+using LearningProgramming.Application.Contracts.Identity.Services;
 using LearningProgramming.Application.Contracts.Logging;
-using LearningProgramming.Application.Contracts.Persistence;
 using LearningProgramming.Application.Exceptions;
 using LearningProgramming.Application.Extensions;
 using LearningProgramming.Application.Models.Identity;
@@ -14,7 +15,7 @@ using System.Text;
 
 namespace LearningProgramming.Identity.Services
 {
-    public class AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtSettings, IUserLoginRepository userLoginRepository, IRoleRepository roleRepository, IUnitOfWork unitOfWork, IAppLogger<AuthService> logger) : IAuthService
+    public class AuthService(IUserRepository userRepository, IOptions<JwtSettings> jwtSettings, IUserLoginRepository userLoginRepository, IRoleRepository roleRepository, IIdentityUnitOfWork unitOfWork, IAppLogger<AuthService> logger) : IAuthService
     {
         private readonly JwtSettings _jwtSettings = jwtSettings.Value;
 
@@ -90,7 +91,6 @@ namespace LearningProgramming.Identity.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sid, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
-                new Claim(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
             }.Union(roleClaims);
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));

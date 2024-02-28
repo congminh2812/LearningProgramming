@@ -1,10 +1,9 @@
-﻿using LearningProgramming.Application.Contracts.Persistence;
-using LearningProgramming.Domain.Common;
+﻿using LearningProgramming.Domain.Common;
 using Microsoft.EntityFrameworkCore;
 
-namespace LearningProgramming.Common.Persistence
+namespace LearningProgramming.Application.Contracts.Common
 {
-    public abstract class UnitOfWork<TContext>(TContext context) : IUnitOfWork where TContext : DbContext
+    public class UnitOfWork<TContext>(TContext context) : IUnitOfWork where TContext : DbContext
     {
         private bool disposed = false;
 

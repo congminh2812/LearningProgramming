@@ -1,4 +1,4 @@
-﻿using LearningProgramming.Application.Contracts.Identity;
+﻿using LearningProgramming.Application.Contracts.Identity.Services;
 using LearningProgramming.Application.Models.Identity;
 using Microsoft.AspNetCore.Mvc;
 
@@ -20,7 +20,7 @@ namespace LearningProgramming.API.Controllers
             return Ok(await authService.Register(request));
         }
 
-        [HttpGet("getNewAccessToken")]
+        [HttpGet("getNewAccessToken/{refreshToken}")]
         public async Task<ActionResult<AuthResponse>> GetNewAccessToken(string refreshToken)
         {
             var response = await authService.GetNewAccessToken(refreshToken);

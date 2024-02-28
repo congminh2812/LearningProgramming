@@ -1,7 +1,7 @@
-﻿using LearningProgramming.Application.Contracts.Persistence;
+﻿using LearningProgramming.Application.Contracts.Common;
+using LearningProgramming.Application.Contracts.Identity.Repositories;
 using LearningProgramming.Application.Extensions;
 using LearningProgramming.Application.Models.Identity;
-using LearningProgramming.Application.Persistence;
 using LearningProgramming.Domain;
 using LearningProgramming.Identity.DBContext;
 using Microsoft.EntityFrameworkCore;
@@ -19,7 +19,7 @@ namespace LearningProgramming.Identity.Repositories
 
         public async Task<User> FindByEmailAsync(string email)
         {
-            return await context.Users.Include(x => x.UserLogin).FirstOrDefaultAsync(x => x.Email == email);
+            return await context.Users.FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }

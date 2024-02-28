@@ -1,5 +1,5 @@
 ﻿using AutoMapper;
-using LearningProgramming.Application.Contracts.Persistence;
+using LearningProgramming.Application.Contracts.Identity.Repositories;
 using LearningProgramming.Application.Features.LeaveAllocation.Commands.CreateLeaveAllocation;
 using MediatR;
 

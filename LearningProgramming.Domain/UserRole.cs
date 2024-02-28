@@ -17,5 +17,6 @@ namespace LearningProgramming.Domain
 
         [ForeignKey(nameof(RoleId))]
         public virtual Role Role { get; set; }
+
     }
 }

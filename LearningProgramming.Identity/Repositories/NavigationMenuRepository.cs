@@ -1,5 +1,5 @@
-﻿using LearningProgramming.Application.Contracts.Persistence;
-using LearningProgramming.Application.Persistence;
+﻿using LearningProgramming.Application.Contracts.Common;
+using LearningProgramming.Application.Contracts.Identity.Repositories;
 using LearningProgramming.Domain;
 using LearningProgramming.Identity.DBContext;
 using Microsoft.EntityFrameworkCore;

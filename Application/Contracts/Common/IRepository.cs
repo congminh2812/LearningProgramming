@@ -1,6 +1,6 @@
 ﻿using System.Linq.Expressions;
 
-namespace LearningProgramming.Application.Contracts.Persistence
+namespace LearningProgramming.Application.Contracts.Common
 {
     public interface IRepository<T> where T : class
     {

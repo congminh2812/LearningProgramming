@@ -1,6 +1,6 @@
 ﻿using AutoMapper;
+using LearningProgramming.Application.Contracts.Identity.Repositories;
 using LearningProgramming.Application.Contracts.Logging;
-using LearningProgramming.Application.Contracts.Persistence;
 using MediatR;
 
 namespace LearningProgramming.Application.Features.NavigationMenu.Queries

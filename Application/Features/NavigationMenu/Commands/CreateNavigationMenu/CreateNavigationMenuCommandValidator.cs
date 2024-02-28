@@ -1,5 +1,5 @@
 ﻿using FluentValidation;
-using LearningProgramming.Application.Contracts.Persistence;
+using LearningProgramming.Application.Contracts.Identity.Repositories;
 
 namespace LearningProgramming.Application.Features.LeaveAllocation.Commands.CreateLeaveAllocation
 {

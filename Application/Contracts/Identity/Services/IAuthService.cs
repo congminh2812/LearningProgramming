@@ -1,6 +1,6 @@
 ﻿using LearningProgramming.Application.Models.Identity;
 
-namespace LearningProgramming.Application.Contracts.Identity
+namespace LearningProgramming.Application.Contracts.Identity.Services
 {
     public interface IAuthService
     {
