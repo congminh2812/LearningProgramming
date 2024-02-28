@@ -91,6 +91,7 @@ namespace LearningProgramming.Identity.Services
             {
                 new Claim(JwtRegisteredClaimNames.Sid, user.Id.ToString()),
                 new Claim(JwtRegisteredClaimNames.Email, user.Email),
+                new Claim(JwtRegisteredClaimNames.Name, $"{user.FirstName} {user.LastName}"),
             }.Union(roleClaims);
 
             var symmetricSecurityKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(_jwtSettings.Key));

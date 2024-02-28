@@ -7,6 +7,8 @@ import HomePage from 'pages/Home'
 import UsersPage from 'pages/Users'
 import ProfilePage from 'pages/Users/Profile'
 import DashboardPage from 'pages/Dashboard'
+import { SnackbarProvider } from 'components/SnackbarProvider'
+import CustomSnackbar from 'components/CustomSnackbar'
 
 const router = createBrowserRouter([
  {
@@ -43,7 +45,10 @@ function App() {
  return (
   <>
    <AuthProvider>
-    <RouterProvider router={router} />
+    <SnackbarProvider>
+     <RouterProvider router={router} />
+     <CustomSnackbar />
+    </SnackbarProvider>
    </AuthProvider>
   </>
  )

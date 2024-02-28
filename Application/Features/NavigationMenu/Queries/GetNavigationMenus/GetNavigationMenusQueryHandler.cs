@@ -3,7 +3,7 @@ using LearningProgramming.Application.Contracts.Identity.Repositories;
 using LearningProgramming.Application.Contracts.Logging;
 using MediatR;
 
-namespace LearningProgramming.Application.Features.NavigationMenu.Queries
+namespace LearningProgramming.Application.Features.NavigationMenu.Queries.GetNavigationMenus
 {
     public class GetNavigationMenusQueryHandler(INavigationMenuRepository navigationMenuRepository, IAppLogger<GetNavigationMenusQueryHandler> logger, IMapper mapper) : IRequestHandler<GetNavigationMenusQuery, List<NavigationMenuDto>>
     {

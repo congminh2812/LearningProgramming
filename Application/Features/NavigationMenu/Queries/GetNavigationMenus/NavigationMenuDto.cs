@@ -1,4 +1,4 @@
-﻿namespace LearningProgramming.Application.Features.NavigationMenu.Queries
+﻿namespace LearningProgramming.Application.Features.NavigationMenu.Queries.GetNavigationMenus
 {
     public class NavigationMenuDto
     {

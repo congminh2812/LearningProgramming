@@ -1,9 +1,8 @@
 import axios from 'axios'
 import LocalStorageService from 'services/LocalStorageService'
 import StorageKeys from 'utils/storage-key'
-import AuthApi from './authApi'
 import { decodeAccessToken } from 'utils/token'
-import { Navigate } from 'react-router-dom'
+import AuthApi from './authApi'
 
 const axiosClient = axios.create({
  baseURL: process.env.REACT_APP_BASE_URL,
@@ -31,8 +30,7 @@ axiosClient.interceptors.response.use(
   return response
  },
  function (error) {
-  if (error.response.status === 401) {
-   error.config._isRetry = true
+  if (error.response && !error.config.url.includes('getNewAccessToken') && error.response.status === 401) {
    const refreshToken = LocalStorageService.get(StorageKeys.REFRESH_TOKEN)
    AuthApi.getNewAccessToken(refreshToken)
     .then((res) => {
@@ -43,7 +41,7 @@ axiosClient.interceptors.response.use(
      return axiosClient(error.config)
     })
     .catch((e) => {
-     Navigate({ to: '/login' })
+     window.location.href = '/login'
     })
   }
   return Promise.reject(error)

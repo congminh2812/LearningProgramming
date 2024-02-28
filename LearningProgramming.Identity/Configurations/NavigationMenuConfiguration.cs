@@ -40,7 +40,7 @@ namespace LearningProgramming.Identity.Configurations
                     },
                     new() {
                         Id = 4,
-                        Name = "Create a new user",
+                        Name = "List of user",
                         CreatedBy = 1,
                         CreatedAt = DateTime.UtcNow,
                         Url = "/users/create",
@@ -55,6 +55,14 @@ namespace LearningProgramming.Identity.Configurations
                         Url = "/users/roles-permission",
                         Position = 3,
                         ParentId = 2,
+                    },
+                    new() {
+                        Id = 6,
+                        Name = "Navigation menu",
+                        CreatedBy = 1,
+                        CreatedAt = DateTime.UtcNow,
+                        Url = "/navigation-menu",
+                        Position = 3,
                     },
                 }
             );
