@@ -4,6 +4,7 @@ import GroupRoundedIcon from '@mui/icons-material/GroupRounded'
 import KeyboardArrowDownIcon from '@mui/icons-material/KeyboardArrowDown'
 import LogoutRoundedIcon from '@mui/icons-material/LogoutRounded'
 import SettingsRoundedIcon from '@mui/icons-material/SettingsRounded'
+import ListRoundedIcon from '@mui/icons-material/ListRounded'
 import Avatar from '@mui/joy/Avatar'
 import Box from '@mui/joy/Box'
 import Divider from '@mui/joy/Divider'
@@ -19,6 +20,7 @@ import NavigationMenuApi from 'api/navigationMenuApi'
 
 import { useAuth } from 'components/AuthProvider'
 import ColorSchemeToggle from 'components/ColorSchemeToggle'
+import { useSnackbar } from 'hooks/useSnackbar'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LocalStorageService from 'services/LocalStorageService'
@@ -61,6 +63,8 @@ const IconMenu = (icon: string) => {
    return <DashboardRoundedIcon />
   case 'user':
    return <GroupRoundedIcon />
+  case 'navigation-menu':
+   return <ListRoundedIcon />
   default:
    return <DashboardRoundedIcon />
  }
@@ -70,19 +74,20 @@ export default function Sidebar() {
  const [menus, setMenus] = useState([])
  const auth = useAuth()
  const navigate = useNavigate()
+ const snackbar = useSnackbar()
  const email = LocalStorageService.get(StorageKeys.EMAIL)
  const name = LocalStorageService.get(StorageKeys.NAME)
  const pathname = window.location.pathname
- console.log(pathname)
+
  useEffect(() => {
   NavigationMenuApi.getNavigationMenus()
    .then((res) => {
     setMenus(res)
    })
    .catch((e) => {
-    console.error(e)
+    snackbar.showSnackbar(e.message)
    })
- }, [])
+ }, [snackbar])
 
  const handleLogout = () => {
   auth.logout()

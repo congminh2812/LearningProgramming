@@ -21,11 +21,11 @@ namespace LearningProgramming.Persistence
 
             services.AddScoped<IPersistenceUnitOfWork, PersistenceUnitOfWork>();
 
-            services.AddTransient<IBookRepository, BookRepository>();
-            services.AddTransient<IChapterRepository, ChapterRepository>();
-            services.AddTransient<ILessonRepository, LessonRepository>();
-            services.AddTransient<ILessonComponentRepository, LessonComponentRepository>();
-            services.AddTransient<IUserProgressRepository, UserProgressRepository>();
+            services.AddScoped<IBookRepository, BookRepository>();
+            services.AddScoped<IChapterRepository, ChapterRepository>();
+            services.AddScoped<ILessonRepository, LessonRepository>();
+            services.AddScoped<ILessonComponentRepository, LessonComponentRepository>();
+            services.AddScoped<IUserProgressRepository, UserProgressRepository>();
 
             return services;
         }

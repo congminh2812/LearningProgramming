@@ -23,8 +23,6 @@ namespace LearningProgramming.API.Controllers
         [HttpGet("getNewAccessToken")]
         public async Task<ActionResult<AuthResponse>> GetNewAccessToken(string refreshToken)
         {
-            return Unauthorized();
-
             var response = await authService.GetNewAccessToken(refreshToken);
 
             if (response is null)

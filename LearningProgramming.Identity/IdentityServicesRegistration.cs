@@ -28,13 +28,13 @@ namespace LearningProgramming.Identity
 
             services.AddScoped<IIdentityUnitOfWork, IdentityUnitOfWork>();
 
-            services.AddTransient<IUserLoginRepository, UserLoginRepository>();
-            services.AddTransient<IUserRepository, UserRepository>();
-            services.AddTransient<IUserRoleRepository, UserRoleRepository>();
-            services.AddTransient<IRoleRepository, RoleRepository>();
-            services.AddTransient<INavigationMenuRepository, NavigationMenuRepository>();
-            services.AddTransient<INavigationMenuRoleRepository, NavigationMenuRoleRepository>();
-            services.AddTransient<IAuthService, AuthService>();
+            services.AddScoped<IUserLoginRepository, UserLoginRepository>();
+            services.AddScoped<IUserRepository, UserRepository>();
+            services.AddScoped<IUserRoleRepository, UserRoleRepository>();
+            services.AddScoped<IRoleRepository, RoleRepository>();
+            services.AddScoped<INavigationMenuRepository, NavigationMenuRepository>();
+            services.AddScoped<INavigationMenuRoleRepository, NavigationMenuRoleRepository>();
+            services.AddScoped<IAuthService, AuthService>();
 
             services.AddAuthentication(options =>
             {

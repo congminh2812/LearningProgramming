@@ -4,6 +4,8 @@ namespace LearningProgramming.Application.Features.NavigationMenu.Commands.Updat
 {
     public class UpdateNavigationMenuCommand : IRequest<Unit>
     {
+        public long Id { get; set; }
+
         public long? ParentId { get; set; }
 
         public string Name { get; set; }
