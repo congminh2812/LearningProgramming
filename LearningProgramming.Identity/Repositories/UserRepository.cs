@@ -19,7 +19,7 @@ namespace LearningProgramming.Identity.Repositories
 
         public async Task<User> FindByEmailAsync(string email)
         {
-            return await context.Users.FirstOrDefaultAsync(x => x.Email == email);
+            return await context.Users.Include(x => x.UserLogin).FirstOrDefaultAsync(x => x.Email == email);
         }
     }
 }

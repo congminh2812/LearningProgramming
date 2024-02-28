@@ -1,8 +1,8 @@
 ﻿using MediatR;
 
-namespace LearningProgramming.Application.Features.NavigationMenu.Commands.CreateNavigationMenu
+namespace LearningProgramming.Application.Features.NavigationMenu.Commands.UpdateNavigationMenu
 {
-    public class CreateNavigationMenuCommand : IRequest<Unit>
+    public class UpdateNavigationMenuCommand : IRequest<Unit>
     {
         public long? ParentId { get; set; }
 

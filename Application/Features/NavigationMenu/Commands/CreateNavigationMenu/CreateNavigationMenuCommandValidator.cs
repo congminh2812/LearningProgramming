@@ -1,7 +1,7 @@
 ﻿using FluentValidation;
 using LearningProgramming.Application.Contracts.Identity.Repositories;
 
-namespace LearningProgramming.Application.Features.LeaveAllocation.Commands.CreateLeaveAllocation
+namespace LearningProgramming.Application.Features.NavigationMenu.Commands.CreateNavigationMenu
 {
     public class CreateNavigationMenuCommandValidator : AbstractValidator<CreateNavigationMenuCommand>
     {
@@ -11,7 +11,5 @@ namespace LearningProgramming.Application.Features.LeaveAllocation.Commands.Crea
         {
             _navigationMenuRepository = navigationMenuRepository;
         }
-
-
     }
 }
