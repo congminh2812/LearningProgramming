@@ -26,6 +26,7 @@ import { useNavigate } from 'react-router-dom'
 import LocalStorageService from 'services/LocalStorageService'
 import { closeSidebar } from 'utils/sidebar'
 import StorageKeys from 'utils/storage-key'
+import { NavigationMenu } from 'models/NavigationMenu'
 
 function Toggler({
  defaultExpanded = false,
@@ -71,7 +72,7 @@ const IconMenu = (icon: string) => {
 }
 
 export default function Sidebar() {
- const [menus, setMenus] = useState([])
+ const [menus, setMenus] = useState<NavigationMenu[]>([])
  const auth = useAuth()
  const navigate = useNavigate()
  const snackbar = useSnackbar()
@@ -82,7 +83,7 @@ export default function Sidebar() {
  useEffect(() => {
   NavigationMenuApi.getNavigationMenus()
    .then((res) => {
-    setMenus(res)
+    if (res) setMenus(res)
    })
    .catch((e) => {
     snackbar.showSnackbar(e.message)
@@ -177,7 +178,7 @@ export default function Sidebar() {
       '--ListItem-radius': (theme) => theme.vars.radius.sm,
      }}
     >
-     {menus.map((menu: any) => (
+     {menus.map((menu: NavigationMenu) => (
       <>
        {menu.children.length === 0 && (
         <ListItem key={menu.id}>
@@ -210,7 +211,7 @@ export default function Sidebar() {
           )}
          >
           <List sx={{ gap: 0.5 }}>
-           {menu.children.map((x: any) => (
+           {menu.children.map((x: NavigationMenu) => (
             <ListItem
              key={x.id}
              sx={{ mt: 0.5 }}

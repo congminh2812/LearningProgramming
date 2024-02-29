@@ -9,6 +9,7 @@ import ProfilePage from 'pages/Users/Profile'
 import DashboardPage from 'pages/Dashboard'
 import { SnackbarProvider } from 'components/SnackbarProvider'
 import CustomSnackbar from 'components/CustomSnackbar'
+import NavigationMenuPage from 'pages/NavigationMenu'
 
 const router = createBrowserRouter([
  {
@@ -33,8 +34,13 @@ const router = createBrowserRouter([
      },
     ],
    },
+   {
+    path: '/navigation-menu',
+    element: <NavigationMenuPage />,
+   },
   ],
  },
+
  {
   path: '*',
   element: <NotFound />,

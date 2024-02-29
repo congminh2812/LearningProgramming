@@ -18,21 +18,20 @@ interface AuthProviderProps {
 }
 
 export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
- const [isLoggedIn, setIsLoggedIn] = useState<boolean>(false)
+ const currentDate = new Date().getTime()
+ const accessToken = LocalStorageService.get(StorageKeys.ACCESS_TOKEN)
+ const refreshToken = LocalStorageService.get(StorageKeys.REFRESH_TOKEN)
+ const accessTokenExpired = LocalStorageService.get(StorageKeys.ACCESS_TOKEN_EXPIRED) || '0'
+
+ const [isLoggedIn, setIsLoggedIn] = useState<boolean>(parseInt(accessTokenExpired) * 1000 >= currentDate)
 
  useEffect(() => {
-  const currentDate = new Date().getTime()
-  const accessToken = LocalStorageService.get(StorageKeys.ACCESS_TOKEN)
-  const refreshToken = LocalStorageService.get(StorageKeys.REFRESH_TOKEN)
-  const accessTokenExpired = LocalStorageService.get(StorageKeys.ACCESS_TOKEN_EXPIRED)
-
   if (!accessToken || !accessTokenExpired || !refreshToken) {
    setIsLoggedIn(false)
    return
   }
 
-  if (parseInt(accessTokenExpired) * 1000 >= currentDate) setIsLoggedIn(true)
-  else {
+  if (parseInt(accessTokenExpired) * 1000 < currentDate) {
    AuthApi.getNewAccessToken(refreshToken)
     .then((res) => {
      setDataLocalStorage(res)
@@ -41,7 +40,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
      logout()
     })
   }
- }, [])
+ }, [accessToken, accessTokenExpired, refreshToken, currentDate])
 
  const login = (token: TokenModel) => {
   setDataLocalStorage(token)

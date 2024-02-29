@@ -1,7 +1,7 @@
 import Box from '@mui/joy/Box'
 import CssBaseline from '@mui/joy/CssBaseline'
 import { CssVarsProvider } from '@mui/joy/styles'
-import { Outlet } from 'react-router-dom'
+import { Outlet, Route, Router, Routes } from 'react-router-dom'
 
 import Header from 'components/Header'
 import Sidebar from 'components/Sidebar'
@@ -9,6 +9,9 @@ import Sidebar from 'components/Sidebar'
 import { useAuth } from 'components/AuthProvider'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
+import DashboardPage from 'pages/Dashboard'
+import UsersPage from 'pages/Users'
+import NavigationMenuPage from 'pages/NavigationMenu'
 
 const HomePage = () => {
  const navigate = useNavigate()
@@ -21,7 +24,7 @@ const HomePage = () => {
  }, [isLoggedIn, navigate])
 
  return (
-  <CssVarsProvider disableTransitionOnChange>
+  <CssVarsProvider>
    <CssBaseline />
    <Box sx={{ display: 'flex', minHeight: '100dvh' }}>
     <Header />
@@ -45,23 +48,7 @@ const HomePage = () => {
       gap: 1,
      }}
     >
-     <Box
-      component='main'
-      className='MainContent'
-      sx={{
-       pt: { xs: 'calc(12px + var(--Header-height))', md: 3 },
-       pb: { xs: 2, sm: 2, md: 3 },
-       flex: 1,
-       display: 'flex',
-       flexDirection: 'column',
-       minWidth: 0,
-       height: '100dvh',
-       gap: 1,
-       overflow: 'auto',
-      }}
-     >
-      <Outlet />
-     </Box>
+     <Outlet />
     </Box>
    </Box>
   </CssVarsProvider>

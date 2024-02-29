@@ -13,7 +13,7 @@ const AuthApi = {
  }),
 
  getNewAccessToken: withErrorHandling(async (refreshToken: string) => {
-  const response = await axiosClient.get(`/auth/getNewAccessToken?refreshToken=${refreshToken}`)
+  const response = await axiosClient.post(`/auth/getNewAccessToken`, { refreshToken })
   return response.data
  }),
 }

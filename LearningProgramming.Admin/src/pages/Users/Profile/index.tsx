@@ -5,10 +5,8 @@ import Button from '@mui/joy/Button'
 import Divider from '@mui/joy/Divider'
 import FormControl from '@mui/joy/FormControl'
 import FormLabel from '@mui/joy/FormLabel'
-import FormHelperText from '@mui/joy/FormHelperText'
 import Input from '@mui/joy/Input'
 import IconButton from '@mui/joy/IconButton'
-import Textarea from '@mui/joy/Textarea'
 import Stack from '@mui/joy/Stack'
 import Select from '@mui/joy/Select'
 import Option from '@mui/joy/Option'
@@ -26,17 +24,12 @@ import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
 import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
 import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded'
-import VideocamRoundedIcon from '@mui/icons-material/VideocamRounded'
-import InsertDriveFileRoundedIcon from '@mui/icons-material/InsertDriveFileRounded'
 import EditRoundedIcon from '@mui/icons-material/EditRounded'
 import CountrySelector from './components/CountrySelector'
-import EditorToolbar from './components/EditorToolbar'
-import FileUpload from './components/FileUpload'
-import DropZone from './components/DropZone'
 
 const ProfilePage = () => {
  return (
-  <Box sx={{ flex: 1, width: '100%' }}>
+  <Box sx={{ flex: 1, width: '100%', padding: 0 }}>
    <Box
     sx={{
      position: 'sticky',
@@ -118,27 +111,6 @@ const ProfilePage = () => {
        value={0}
       >
        Settings
-      </Tab>
-      <Tab
-       sx={{ borderRadius: '6px 6px 0 0' }}
-       indicatorInset
-       value={1}
-      >
-       Team
-      </Tab>
-      <Tab
-       sx={{ borderRadius: '6px 6px 0 0' }}
-       indicatorInset
-       value={2}
-      >
-       Plan
-      </Tab>
-      <Tab
-       sx={{ borderRadius: '6px 6px 0 0' }}
-       indicatorInset
-       value={3}
-      >
-       Billing
       </Tab>
      </TabList>
     </Tabs>
@@ -391,85 +363,6 @@ const ProfilePage = () => {
         </Select>
        </FormControl>
       </div>
-     </Stack>
-     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-      <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-       <Button
-        size='sm'
-        variant='outlined'
-        color='neutral'
-       >
-        Cancel
-       </Button>
-       <Button
-        size='sm'
-        variant='solid'
-       >
-        Save
-       </Button>
-      </CardActions>
-     </CardOverflow>
-    </Card>
-    <Card>
-     <Box sx={{ mb: 1 }}>
-      <Typography level='title-md'>Bio</Typography>
-      <Typography level='body-sm'>Write a short introduction to be displayed on your profile</Typography>
-     </Box>
-     <Divider />
-     <Stack
-      spacing={2}
-      sx={{ my: 1 }}
-     >
-      <EditorToolbar />
-      <Textarea
-       size='sm'
-       minRows={4}
-       sx={{ mt: 1.5 }}
-       defaultValue="I'm a software developer based in Bangkok, Thailand. My goal is to solve UI problems with neat CSS without using too much JavaScript."
-      />
-      <FormHelperText sx={{ mt: 0.75, fontSize: 'xs' }}>275 characters left</FormHelperText>
-     </Stack>
-     <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
-      <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
-       <Button
-        size='sm'
-        variant='outlined'
-        color='neutral'
-       >
-        Cancel
-       </Button>
-       <Button
-        size='sm'
-        variant='solid'
-       >
-        Save
-       </Button>
-      </CardActions>
-     </CardOverflow>
-    </Card>
-    <Card>
-     <Box sx={{ mb: 1 }}>
-      <Typography level='title-md'>Portfolio projects</Typography>
-      <Typography level='body-sm'>Share a few snippets of your work.</Typography>
-     </Box>
-     <Divider />
-     <Stack
-      spacing={2}
-      sx={{ my: 1 }}
-     >
-      <DropZone />
-      <FileUpload
-       icon={<InsertDriveFileRoundedIcon />}
-       fileName='Tech design requirements.pdf'
-       fileSize='200 kB'
-       progress={100}
-      />
-      <FileUpload
-       icon={<VideocamRoundedIcon />}
-       fileName='Dashboard prototype recording.mp4'
-       fileSize='16 MB'
-       progress={40}
-      />
      </Stack>
      <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
       <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
