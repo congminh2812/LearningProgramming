@@ -43,7 +43,10 @@ axiosClient.interceptors.response.use(
     .catch((e) => {
      window.location.href = '/login'
     })
-  }
+    
+    return Promise.resolve()
+  } 
+    
   return Promise.reject(error)
  },
 )
