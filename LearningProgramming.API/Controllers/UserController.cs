@@ -1,23 +1,23 @@
-﻿using LearningProgramming.Application.Features.Role.Commands.CreateRole;
-using LearningProgramming.Application.Features.Role.Commands.DeleteRole;
-using LearningProgramming.Application.Features.Role.Commands.UpdateRole;
-using LearningProgramming.Application.Features.Role.Queries.GetRoles;
+﻿using LearningProgramming.Application.Features.User.Commands.CreateUser;
+using LearningProgramming.Application.Features.User.Commands.DeleteUser;
+using LearningProgramming.Application.Features.User.Commands.UpdateUser;
+using LearningProgramming.Application.Features.User.Queries.GetUsers;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
 
 namespace LearningProgramming.API.Controllers
 {
-    public class RoleController(IMediator mediator) : BaseController
+    public class UserController(IMediator mediator) : BaseController
     {
-        [HttpGet("getRoles")]
-        public async Task<ActionResult<IEnumerable<RoleDto>>> GetRoles()
+        [HttpGet("getUsers")]
+        public async Task<ActionResult<IEnumerable<UserDto>>> GetUsers()
         {
-            var data = await mediator.Send(new GetRolesQuery());
+            var data = await mediator.Send(new GetUsersQuery());
             return Ok(data);
         }
 
         [HttpPost("add")]
-        public async Task<ActionResult<Unit>> Add([FromBody] CreateRoleCommand request)
+        public async Task<ActionResult<Unit>> Add([FromBody] CreateUserCommand request)
         {
             var data = await mediator.Send(request);
 
@@ -25,7 +25,7 @@ namespace LearningProgramming.API.Controllers
         }
 
         [HttpPut("update/{id}")]
-        public async Task<ActionResult<Unit>> Update(long id, [FromBody] UpdateRoleCommand request)
+        public async Task<ActionResult<Unit>> Update(long id, [FromBody] UpdateUserCommand request)
         {
             request.Id = id;
             var data = await mediator.Send(request);
@@ -36,7 +36,7 @@ namespace LearningProgramming.API.Controllers
         [HttpDelete("delete/{id}")]
         public async Task<ActionResult<Unit>> Delete(long id)
         {
-            var data = await mediator.Send(new DeleteRoleCommand { Id = id });
+            var data = await mediator.Send(new DeleteUserCommand { Id = id });
 
             return Ok(data);
         }
