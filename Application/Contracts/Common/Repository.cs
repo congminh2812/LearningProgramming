@@ -25,13 +25,16 @@ namespace LearningProgramming.Application.Contracts.Common
                 ((IDeleteable)entity).IsDeleted = true;
                 Update(entity);
             }
-
-            context.Set<TEntity>().Remove(entity);
+            else
+                context.Set<TEntity>().Remove(entity);
         }
 
         public IQueryable<TEntity> GetAll()
         {
-            return context.Set<TEntity>();
+            if (typeof(TEntity).GetInterfaces().Contains(typeof(IDeleteable)))
+                return context.Set<TEntity>().Where(x => !((IDeleteable)x).IsDeleted);
+            else
+                return context.Set<TEntity>();
         }
 
         public IQueryable<TEntity> GetAll(params Expression<Func<TEntity, object>>[] propertySelectors)

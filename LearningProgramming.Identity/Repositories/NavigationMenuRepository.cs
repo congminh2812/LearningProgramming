@@ -13,7 +13,7 @@ namespace LearningProgramming.Identity.Repositories
             var data = await context.UserRoles
                 .Include(x => x.Role).ThenInclude(x => x.NavigationMenuRoles).ThenInclude(x => x.NavigationMenu)
                 .Where(x => x.UserId == userId)
-                .SelectMany(x => x.Role.NavigationMenuRoles.Select(d => d.NavigationMenu)).ToListAsync();
+                .SelectMany(x => x.Role.NavigationMenuRoles.Select(d => d.NavigationMenu)).Where(x => !x.IsDeleted).ToListAsync();
 
             return data;
         }

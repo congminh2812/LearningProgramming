@@ -1,4 +1,5 @@
-﻿using LearningProgramming.Application.Features.Role.Commands.CreateRole;
+﻿using LearningProgramming.Application.Extensions;
+using LearningProgramming.Application.Features.Role.Commands.CreateRole;
 using LearningProgramming.Application.Features.Role.Commands.DeleteRole;
 using LearningProgramming.Application.Features.Role.Commands.UpdateRole;
 using LearningProgramming.Application.Features.Role.Queries.GetRoles;
@@ -19,6 +20,7 @@ namespace LearningProgramming.API.Controllers
         [HttpPost("add")]
         public async Task<ActionResult<Unit>> Add([FromBody] CreateRoleCommand request)
         {
+            request.CreatedBy = User.GetUserId();
             var data = await mediator.Send(request);
 
             return Ok(data);

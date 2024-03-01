@@ -1,10 +1,11 @@
-﻿using LearningProgramming.Application.Features.NavigationMenu.Commands.CreateNavigationMenu;
+﻿using LearningProgramming.Application.Extensions;
+using LearningProgramming.Application.Features.NavigationMenu.Commands.CreateNavigationMenu;
 using LearningProgramming.Application.Features.NavigationMenu.Commands.DeleteNavigationMenu;
 using LearningProgramming.Application.Features.NavigationMenu.Commands.UpdateNavigationMenu;
 using LearningProgramming.Application.Features.NavigationMenu.Queries.GetNavigationMenus;
+using LearningProgramming.Application.Features.NavigationMenu.Queries.GetNavigationMenusByUserId;
 using MediatR;
 using Microsoft.AspNetCore.Mvc;
-using System.IdentityModel.Tokens.Jwt;
 
 namespace LearningProgramming.API.Controllers
 {
@@ -13,15 +14,23 @@ namespace LearningProgramming.API.Controllers
         [HttpGet("getNavigationMenus")]
         public async Task<ActionResult<IEnumerable<NavigationMenuDto>>> GetNavigationMenus()
         {
-            var userId = User.FindFirst(JwtRegisteredClaimNames.Sid)?.Value ?? "0";
+            var data = await mediator.Send(new GetNavigationMenusQuery());
+            return Ok(data);
+        }
 
-            var data = await mediator.Send(new GetNavigationMenusQuery(long.Parse(userId)));
+        [HttpGet("getNavigationMenusByUserId")]
+        public async Task<ActionResult<IEnumerable<NavigationMenuDto>>> GetNavigationMenusByUserId()
+        {
+            var userId = User.GetUserId();
+            var data = await mediator.Send(new GetNavigationMenusByUserIdQuery(userId));
+
             return Ok(data);
         }
 
         [HttpPost("add")]
         public async Task<ActionResult<Unit>> Add([FromBody] CreateNavigationMenuCommand request)
         {
+            request.CreatedBy = User.GetUserId();
             var data = await mediator.Send(request);
 
             return Ok(data);

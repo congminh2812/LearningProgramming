@@ -2,7 +2,7 @@
 
 namespace LearningProgramming.Application.Features.NavigationMenu.Queries.GetNavigationMenus
 {
-    public record GetNavigationMenusQuery(long UserId) : IRequest<List<NavigationMenuDto>>
+    public record GetNavigationMenusQuery : IRequest<List<NavigationMenuDto>>
     {
 
     }

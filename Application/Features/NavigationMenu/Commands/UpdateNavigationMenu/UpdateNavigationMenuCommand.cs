@@ -1,4 +1,5 @@
 ﻿using MediatR;
+using System.ComponentModel.DataAnnotations;
 
 namespace LearningProgramming.Application.Features.NavigationMenu.Commands.UpdateNavigationMenu
 {
@@ -8,8 +9,10 @@ namespace LearningProgramming.Application.Features.NavigationMenu.Commands.Updat
 
         public long? ParentId { get; set; }
 
+        [Required]
         public string Name { get; set; }
 
+        [Required]
         public string Url { get; set; }
 
         public string Icon { get; set; }

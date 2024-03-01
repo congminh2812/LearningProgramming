@@ -2,6 +2,7 @@
 using LearningProgramming.Application.Contracts.Identity.Repositories;
 using LearningProgramming.Application.Contracts.Logging;
 using MediatR;
+using Microsoft.EntityFrameworkCore;
 
 namespace LearningProgramming.Application.Features.NavigationMenu.Queries.GetNavigationMenus
 {
@@ -9,7 +10,7 @@ namespace LearningProgramming.Application.Features.NavigationMenu.Queries.GetNav
     {
         public async Task<List<NavigationMenuDto>> Handle(GetNavigationMenusQuery request, CancellationToken cancellationToken)
         {
-            var data = await navigationMenuRepository.GetMenusByUserIdAsync(request.UserId);
+            var data = await navigationMenuRepository.GetAll().ToListAsync(cancellationToken: cancellationToken);
             var dataDto = mapper.Map<List<NavigationMenuDto>>(data.Where(x => x.ParentId is null));
 
             dataDto.ForEach(x =>
