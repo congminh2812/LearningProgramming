@@ -1,15 +1,18 @@
-import './App.css'
-import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import NotFound from 'pages/NotFound'
-import LoginPage from 'pages/Login'
+import { useColorScheme } from '@mui/joy'
 import { AuthProvider } from 'components/AuthProvider'
+import DashboardPage from 'pages/Dashboard'
 import HomePage from 'pages/Home'
+import LoginPage from 'pages/Login'
+import NavigationMenuPage from 'pages/NavigationMenu'
+import NotFound from 'pages/NotFound'
 import UsersPage from 'pages/Users'
 import ProfilePage from 'pages/Users/Profile'
-import DashboardPage from 'pages/Dashboard'
-import { SnackbarProvider } from 'components/SnackbarProvider'
-import CustomSnackbar from 'components/CustomSnackbar'
-import NavigationMenuPage from 'pages/NavigationMenu'
+import { RouterProvider, createBrowserRouter } from 'react-router-dom'
+import { ToastContainer } from 'react-toastify'
+import 'react-toastify/dist/ReactToastify.css'
+import './App.css'
+import './websocket/account'
+import ListUserPage from 'pages/Users/ListUser'
 
 const router = createBrowserRouter([
  {
@@ -32,6 +35,10 @@ const router = createBrowserRouter([
       path: '/users/profile',
       element: <ProfilePage />,
      },
+     {
+      path: '/users/list-user',
+      element: <ListUserPage />,
+     },
     ],
    },
    {
@@ -48,15 +55,23 @@ const router = createBrowserRouter([
 ])
 
 function App() {
+ const { mode } = useColorScheme()
+
  return (
-  <>
-   <AuthProvider>
-    <SnackbarProvider>
-     <RouterProvider router={router} />
-     <CustomSnackbar />
-    </SnackbarProvider>
-   </AuthProvider>
-  </>
+  <AuthProvider>
+   <RouterProvider router={router} />
+   <ToastContainer
+    position='bottom-right'
+    autoClose={3000}
+    hideProgressBar={false}
+    newestOnTop={false}
+    closeOnClick
+    rtl={false}
+    pauseOnFocusLoss
+    pauseOnHover
+    theme={mode}
+   />
+  </AuthProvider>
  )
 }
 

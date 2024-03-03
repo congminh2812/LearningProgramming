@@ -1,39 +1,43 @@
 import Box from '@mui/joy/Box'
-import Breadcrumbs from '@mui/joy/Breadcrumbs'
-import Link from '@mui/joy/Link'
-import Typography from '@mui/joy/Typography'
 
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
-
+import { CircularProgress } from '@mui/joy'
+import { fetchNavigationMenus } from 'app/slices/navigationMenuSlice'
+import { useAppDispatch, useAppSelector } from 'app/store'
+import CustomBreadcrums from 'components/CustomBreadcrumbs'
+import { useEffect } from 'react'
 import MenuList from './components/MenuList'
 
 const NavigationMenuPage = () => {
+ const dispatch = useAppDispatch()
+ const { menus, loading } = useAppSelector((state) => state.navigationMenu)
+
+ const breadcrumbs = [
+  {
+   name: 'Menus',
+  },
+ ]
+
+ useEffect(() => {
+  dispatch(fetchNavigationMenus())
+ }, [dispatch])
+
+ if (loading)
+  return (
+   <Box
+    width='100%'
+    height='100%'
+    display='flex'
+    justifyContent='center'
+    alignItems='center'
+   >
+    <CircularProgress />
+   </Box>
+  )
+
  return (
   <>
    <Box sx={{ display: 'flex', alignItems: 'center' }}>
-    <Breadcrumbs
-     size='sm'
-     aria-label='breadcrumbs'
-     separator={<ChevronRightRoundedIcon fontSize='small' />}
-     sx={{ pl: 0 }}
-    >
-     <Link
-      underline='none'
-      color='neutral'
-      href='#some-link'
-      aria-label='Home'
-     >
-      <HomeRoundedIcon />
-     </Link>
-     <Typography
-      color='primary'
-      fontWeight={500}
-      fontSize={12}
-     >
-      Menus
-     </Typography>
-    </Breadcrumbs>
+    <CustomBreadcrums data={breadcrumbs} />
    </Box>
    <Box
     sx={{
@@ -46,7 +50,7 @@ const NavigationMenuPage = () => {
      justifyContent: 'space-between',
     }}
    >
-    <MenuList />
+    <MenuList menus={menus} />
    </Box>
   </>
  )

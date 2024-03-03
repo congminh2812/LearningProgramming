@@ -3,6 +3,7 @@ import LocalStorageService from 'services/LocalStorageService'
 import StorageKeys from 'utils/storage-key'
 import { decodeAccessToken } from 'utils/token'
 import AuthApi from './authApi'
+import { toast } from 'react-toastify'
 
 const axiosClient = axios.create({
  baseURL: process.env.REACT_APP_BASE_URL,
@@ -40,13 +41,13 @@ axiosClient.interceptors.response.use(
 
      return axiosClient(error.config)
     })
-    .catch((e) => {
+    .catch(() => {
      window.location.href = '/login'
     })
-    
-    return Promise.resolve()
-  } 
-    
+
+   return Promise.resolve({ data: [] })
+  }
+
   return Promise.reject(error)
  },
 )
@@ -56,8 +57,8 @@ export const withErrorHandling = (apiMethod: any) => {
   try {
    const result = await apiMethod(...args)
    return result
-  } catch (error) {
-   console.error('Error:', error)
+  } catch (error: any) {
+   toast.error(error.message)
    throw error
   }
  }

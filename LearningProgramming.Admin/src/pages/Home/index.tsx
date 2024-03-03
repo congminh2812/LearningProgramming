@@ -1,7 +1,7 @@
 import Box from '@mui/joy/Box'
 import CssBaseline from '@mui/joy/CssBaseline'
 import { CssVarsProvider } from '@mui/joy/styles'
-import { Outlet, Route, Router, Routes } from 'react-router-dom'
+import { Outlet } from 'react-router-dom'
 
 import Header from 'components/Header'
 import Sidebar from 'components/Sidebar'
@@ -9,9 +9,6 @@ import Sidebar from 'components/Sidebar'
 import { useAuth } from 'components/AuthProvider'
 import { useEffect } from 'react'
 import { useNavigate } from 'react-router-dom'
-import DashboardPage from 'pages/Dashboard'
-import UsersPage from 'pages/Users'
-import NavigationMenuPage from 'pages/NavigationMenu'
 
 const HomePage = () => {
  const navigate = useNavigate()

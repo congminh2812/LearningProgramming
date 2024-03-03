@@ -20,7 +20,6 @@ import NavigationMenuApi from 'api/navigationMenuApi'
 
 import { useAuth } from 'components/AuthProvider'
 import ColorSchemeToggle from 'components/ColorSchemeToggle'
-import { useSnackbar } from 'hooks/useSnackbar'
 import { Dispatch, ReactNode, SetStateAction, useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import LocalStorageService from 'services/LocalStorageService'
@@ -75,20 +74,17 @@ export default function Sidebar() {
  const [menus, setMenus] = useState<NavigationMenu[]>([])
  const auth = useAuth()
  const navigate = useNavigate()
- const snackbar = useSnackbar()
  const email = LocalStorageService.get(StorageKeys.EMAIL)
  const name = LocalStorageService.get(StorageKeys.NAME)
  const pathname = window.location.pathname
 
  useEffect(() => {
-  NavigationMenuApi.getNavigationMenus()
+  NavigationMenuApi.getNavigationMenusByUserId()
    .then((res) => {
     if (res) setMenus(res)
    })
-   .catch((e) => {
-    snackbar.showSnackbar(e.message)
-   })
- }, [snackbar])
+   .catch(() => {})
+ }, [])
 
  const handleLogout = () => {
   auth.logout()
@@ -179,51 +175,47 @@ export default function Sidebar() {
      }}
     >
      {menus.map((menu: NavigationMenu) => (
-      <>
+      <ListItem
+       key={menu.id}
+       nested={menu.children.length > 0}
+      >
        {menu.children.length === 0 && (
-        <ListItem key={menu.id}>
-         <ListItemButton
-          selected={pathname === menu.url}
-          onClick={() => navigate(menu.url)}
-         >
-          {IconMenu(menu.icon)}
-          <ListItemContent>
-           <Typography level='title-sm'>{menu.name}</Typography>
-          </ListItemContent>
-         </ListItemButton>
-        </ListItem>
+        <ListItemButton
+         selected={pathname === menu.url}
+         onClick={() => navigate(menu.url)}
+        >
+         {IconMenu(menu.icon)}
+         <ListItemContent>
+          <Typography level='title-sm'>{menu.name}</Typography>
+         </ListItemContent>
+        </ListItemButton>
        )}
 
        {menu.children.length > 0 && (
-        <ListItem
-         key={menu.id}
-         nested
+        <Toggler
+         renderToggle={({ open, setOpen }) => (
+          <ListItemButton onClick={() => setOpen(!open)}>
+           {IconMenu(menu.icon)}
+           <ListItemContent>
+            <Typography level='title-sm'>{menu.name}</Typography>
+           </ListItemContent>
+           <KeyboardArrowDownIcon sx={{ transform: open ? 'rotate(180deg)' : 'none' }} />
+          </ListItemButton>
+         )}
         >
-         <Toggler
-          renderToggle={({ open, setOpen }) => (
-           <ListItemButton onClick={() => setOpen(!open)}>
-            {IconMenu(menu.icon)}
-            <ListItemContent>
-             <Typography level='title-sm'>{menu.name}</Typography>
-            </ListItemContent>
-            <KeyboardArrowDownIcon sx={{ transform: open ? 'rotate(180deg)' : 'none' }} />
-           </ListItemButton>
-          )}
-         >
-          <List sx={{ gap: 0.5 }}>
-           {menu.children.map((x: NavigationMenu) => (
-            <ListItem
-             key={x.id}
-             sx={{ mt: 0.5 }}
-            >
-             <ListItemButton onClick={() => navigate(x.url)}>{x.name}</ListItemButton>
-            </ListItem>
-           ))}
-          </List>
-         </Toggler>
-        </ListItem>
+         <List sx={{ gap: 0.5 }}>
+          {menu.children.map((x: NavigationMenu) => (
+           <ListItem
+            key={x.id}
+            sx={{ mt: 0.5 }}
+           >
+            <ListItemButton onClick={() => navigate(x.url)}>{x.name}</ListItemButton>
+           </ListItem>
+          ))}
+         </List>
+        </Toggler>
        )}
-      </>
+      </ListItem>
      ))}
     </List>
 
@@ -237,7 +229,7 @@ export default function Sidebar() {
       mb: 2,
      }}
     >
-     <ListItem>
+     <ListItem key={'settings'}>
       <ListItemButton>
        <SettingsRoundedIcon />
        Settings

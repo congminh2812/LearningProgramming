@@ -10,7 +10,7 @@ namespace LearningProgramming.Application.Features.NavigationMenu.Queries.GetNav
     {
         public async Task<List<NavigationMenuDto>> Handle(GetNavigationMenusQuery request, CancellationToken cancellationToken)
         {
-            var data = await navigationMenuRepository.GetAll().ToListAsync(cancellationToken: cancellationToken);
+            var data = await navigationMenuRepository.GetAll().OrderBy(x => x.Position).ToListAsync(cancellationToken: cancellationToken);
             var dataDto = mapper.Map<List<NavigationMenuDto>>(data.Where(x => x.ParentId is null));
 
             dataDto.ForEach(x =>

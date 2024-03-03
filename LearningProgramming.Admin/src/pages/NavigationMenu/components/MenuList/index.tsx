@@ -1,4 +1,3 @@
-/* eslint-disable jsx-a11y/anchor-is-valid */
 import Box from '@mui/joy/Box'
 import IconButton from '@mui/joy/IconButton'
 import List from '@mui/joy/List'
@@ -9,10 +8,98 @@ import * as React from 'react'
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown'
 import ReceiptLong from '@mui/icons-material/ReceiptLong'
 import ListItemButton, { listItemButtonClasses } from '@mui/joy/ListItemButton'
+import { NavigationMenu } from 'models/NavigationMenu'
+import { AddCircleRounded, DeleteOutlineRounded, EditRounded } from '@mui/icons-material'
+import FormMenu from './components/FormMenu'
+import NavigationMenuApi from 'api/navigationMenuApi'
+import { toast } from 'react-toastify'
+import ConfirmDelete from 'components/ConfirmDelete'
+import { useAppDispatch } from 'app/store'
+import { fetchNavigationMenus } from 'app/slices/navigationMenuSlice'
 
-export default function MenuList() {
- const [open, setOpen] = React.useState(false)
- const [open2, setOpen2] = React.useState(false)
+interface MenuListProps {
+ menus: NavigationMenu[]
+}
+
+export default function MenuList({ menus }: MenuListProps) {
+ const dispatch = useAppDispatch()
+ const [openForm, setOpenForm] = React.useState(false)
+ const [openDelete, setOpenDelete] = React.useState(false)
+ const [menusClone, setMenusClone] = React.useState<any[]>(menus)
+ const [selectedMenu, setSelectedMenu] = React.useState<NavigationMenu | undefined>()
+
+ React.useEffect(() => {
+  setMenusClone(menus.map((x) => ({ ...x, isOpen: false })))
+ }, [menus])
+
+ const handleClickItem = (item: any) => {
+  const dataClone = [
+   ...menusClone.map((x) => {
+    if (x.id === item.id) x.isOpen = !x.isOpen
+
+    return x
+   }),
+  ]
+  setMenusClone(dataClone)
+ }
+
+ const handleClickAdd = (item: NavigationMenu | undefined) => {
+  setOpenForm(true)
+  setSelectedMenu(item)
+ }
+
+ const handleClickDelete = (item: NavigationMenu | undefined) => {
+  setOpenDelete(true)
+  setSelectedMenu(item)
+ }
+
+ const handleClickConfirmDelete = () => {
+  if (!selectedMenu) return
+  setOpenDelete(false)
+  NavigationMenuApi.deleteNavigationMenu(selectedMenu.id)
+   .then(() => {
+    toast.success('Delete successfully')
+    dispatch(fetchNavigationMenus())
+   })
+   .catch()
+ }
+
+ const renderButtons = (item: any) => {
+  return (
+   <>
+    <IconButton
+     size='sm'
+     sx={{ verticalAlign: 'middle' }}
+     color='success'
+     onClick={() => {
+      handleClickAdd({ ...item, parentId: item.id })
+     }}
+    >
+     <AddCircleRounded />
+    </IconButton>
+    <IconButton
+     size='sm'
+     sx={{ verticalAlign: 'middle' }}
+     color='primary'
+     onClick={() => {
+      handleClickAdd({ ...item, parentId: undefined })
+     }}
+    >
+     <EditRounded />
+    </IconButton>
+    <IconButton
+     size='sm'
+     sx={{ verticalAlign: 'middle' }}
+     color='danger'
+     onClick={() => {
+      handleClickDelete(item)
+     }}
+    >
+     <DeleteOutlineRounded />
+    </IconButton>
+   </>
+  )
+ }
 
  return (
   <Box
@@ -63,107 +150,81 @@ export default function MenuList() {
       >
        Navigation menus
       </Typography>
+      <IconButton
+       size='sm'
+       color='success'
+       onClick={() => {
+        handleClickAdd(undefined)
+       }}
+      >
+       <AddCircleRounded />
+      </IconButton>
      </ListItem>
     </ListItem>
 
-    <ListItem
-     nested
-     sx={{ my: 1 }}
-     startAction={
-      <IconButton
-       variant='plain'
-       size='sm'
-       color='neutral'
-       onClick={() => setOpen(!open)}
-      >
-       <KeyboardArrowDown sx={{ transform: open ? 'initial' : 'rotate(-90deg)' }} />
-      </IconButton>
-     }
-    >
-     <ListItem>
-      <Typography
-       level='inherit'
-       sx={{
-        fontWeight: open ? 'bold' : undefined,
-        color: open ? 'text.primary' : 'inherit',
-       }}
-      >
-       Tutorial
-      </Typography>
-      <Typography
-       component='span'
-       level='body-xs'
-      >
-       9
-      </Typography>
-     </ListItem>
-     {open && (
-      <List sx={{ '--ListItem-paddingY': '8px' }}>
-       <ListItem>
-        <ListItemButton>Overview</ListItemButton>
-       </ListItem>
-       <ListItem>
-        <ListItemButton>0. Set Up Your Development Environment</ListItemButton>
-       </ListItem>
-       <ListItem>
-        <ListItemButton>1. Create and Deploy Your First Gatsby Site</ListItemButton>
-       </ListItem>
-       <ListItem>
-        <ListItemButton>2. Use and Style React components</ListItemButton>
-       </ListItem>
-      </List>
-     )}
-    </ListItem>
+    {menusClone.map((menu) => (
+     <ListItem
+      key={menu.id}
+      nested
+      sx={{ my: 1 }}
+      startAction={
+       <IconButton
+        variant='plain'
+        size='sm'
+        color='neutral'
+        onClick={() => handleClickItem(menu)}
+       >
+        <KeyboardArrowDown sx={{ transform: menu.isOpen ? 'initial' : 'rotate(-90deg)' }} />
+       </IconButton>
+      }
+     >
+      <ListItem>
+       <Typography
+        level='inherit'
+        sx={{
+         fontWeight: menu.isOpen ? 'bold' : undefined,
+         color: menu.isOpen ? 'text.primary' : 'inherit',
+        }}
+       >
+        {menu.name}
+        {menu.children.length > 0 && (
+         <Typography
+          component='span'
+          level='body-xs'
+         >
+          {` (${menu.children.length})`}
+         </Typography>
+        )}
+        {renderButtons(menu)}
+       </Typography>
+      </ListItem>
 
-    <ListItem
-     nested
-     sx={{ my: 1 }}
-     startAction={
-      <IconButton
-       variant='plain'
-       size='sm'
-       color='neutral'
-       onClick={() => setOpen2((bool) => !bool)}
-      >
-       <KeyboardArrowDown sx={{ transform: open2 ? 'initial' : 'rotate(-90deg)' }} />
-      </IconButton>
-     }
-    >
-     <ListItem>
-      <Typography
-       level='inherit'
-       sx={{
-        fontWeight: open2 ? 'bold' : undefined,
-        color: open2 ? 'text.primary' : 'inherit',
-       }}
-      >
-       How-to Guides
-      </Typography>
-      <Typography
-       component='span'
-       level='body-xs'
-      >
-       39
-      </Typography>
+      {menu.isOpen && (
+       <List sx={{ '--ListItem-paddingY': '8px' }}>
+        {menu.children.map((c: any) => (
+         <ListItem key={c.id}>
+          <ListItemButton sx={{ gap: 0 }}>
+           {c.name}
+           {renderButtons(c)}
+          </ListItemButton>
+         </ListItem>
+        ))}
+       </List>
+      )}
      </ListItem>
-     {open2 && (
-      <List sx={{ '--ListItem-paddingY': '8px' }}>
-       <ListItem>
-        <ListItemButton>Overview</ListItemButton>
-       </ListItem>
-       <ListItem>
-        <ListItemButton>Local Development</ListItemButton>
-       </ListItem>
-       <ListItem>
-        <ListItemButton>Routing</ListItemButton>
-       </ListItem>
-       <ListItem>
-        <ListItemButton>Styling</ListItemButton>
-       </ListItem>
-      </List>
-     )}
-    </ListItem>
+    ))}
    </List>
+
+   <FormMenu
+    open={openForm}
+    setOpen={setOpenForm}
+    menu={selectedMenu}
+   />
+   <ConfirmDelete
+    open={openDelete}
+    setOpen={setOpenDelete}
+    onConfirm={handleClickConfirmDelete}
+   />
   </Box>
  )
 }

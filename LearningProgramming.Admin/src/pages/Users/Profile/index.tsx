@@ -1,33 +1,39 @@
-import * as React from 'react'
 import AspectRatio from '@mui/joy/AspectRatio'
 import Box from '@mui/joy/Box'
 import Button from '@mui/joy/Button'
-import Divider from '@mui/joy/Divider'
-import FormControl from '@mui/joy/FormControl'
-import FormLabel from '@mui/joy/FormLabel'
-import Input from '@mui/joy/Input'
-import IconButton from '@mui/joy/IconButton'
-import Stack from '@mui/joy/Stack'
-import Select from '@mui/joy/Select'
-import Option from '@mui/joy/Option'
-import Typography from '@mui/joy/Typography'
-import Tabs from '@mui/joy/Tabs'
-import TabList from '@mui/joy/TabList'
-import Tab, { tabClasses } from '@mui/joy/Tab'
-import Breadcrumbs from '@mui/joy/Breadcrumbs'
-import Link from '@mui/joy/Link'
 import Card from '@mui/joy/Card'
 import CardActions from '@mui/joy/CardActions'
 import CardOverflow from '@mui/joy/CardOverflow'
+import Divider from '@mui/joy/Divider'
+import FormControl from '@mui/joy/FormControl'
+import FormLabel from '@mui/joy/FormLabel'
+import IconButton from '@mui/joy/IconButton'
+import Input from '@mui/joy/Input'
+import Option from '@mui/joy/Option'
+import Select from '@mui/joy/Select'
+import Stack from '@mui/joy/Stack'
+import Tab, { tabClasses } from '@mui/joy/Tab'
+import TabList from '@mui/joy/TabList'
+import Tabs from '@mui/joy/Tabs'
+import Typography from '@mui/joy/Typography'
 
-import HomeRoundedIcon from '@mui/icons-material/HomeRounded'
-import ChevronRightRoundedIcon from '@mui/icons-material/ChevronRightRounded'
-import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
 import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded'
 import EditRoundedIcon from '@mui/icons-material/EditRounded'
+import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
+import CustomBreadcrums from 'components/CustomBreadcrumbs'
 import CountrySelector from './components/CountrySelector'
 
 const ProfilePage = () => {
+ const breadcrumbs = [
+  {
+   to: '/user',
+   name: 'Users',
+  },
+  {
+   name: 'My profile',
+  },
+ ]
+
  return (
   <Box sx={{ flex: 1, width: '100%', padding: 0 }}>
    <Box
@@ -39,37 +45,7 @@ const ProfilePage = () => {
     }}
    >
     <Box sx={{ px: { xs: 2, md: 6 } }}>
-     <Breadcrumbs
-      size='sm'
-      aria-label='breadcrumbs'
-      separator={<ChevronRightRoundedIcon />}
-      sx={{ pl: 0 }}
-     >
-      <Link
-       underline='none'
-       color='neutral'
-       href='#some-link'
-       aria-label='Home'
-      >
-       <HomeRoundedIcon />
-      </Link>
-      <Link
-       underline='hover'
-       color='neutral'
-       href='#some-link'
-       fontSize={12}
-       fontWeight={500}
-      >
-       Users
-      </Link>
-      <Typography
-       color='primary'
-       fontWeight={500}
-       fontSize={12}
-      >
-       My profile
-      </Typography>
-     </Breadcrumbs>
+     <CustomBreadcrums data={breadcrumbs} />
      <Typography
       level='h2'
       component='h1'

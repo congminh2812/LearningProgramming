@@ -12,7 +12,6 @@ namespace LearningProgramming.Application.Features.NavigationMenu.Commands.Updat
             var menu = await navigationMenuRepository.GetByIdAsync(request.Id)
                 ?? throw new NotFoundException(nameof(Domain.NavigationMenu), request.Id);
 
-            menu.ParentId = request.ParentId;
             menu.Name = request.Name;
             menu.Url = request.Url;
             menu.Icon = request.Icon;

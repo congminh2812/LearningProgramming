@@ -1,4 +1,5 @@
 import BadgeRoundedIcon from '@mui/icons-material/BadgeRounded'
+import { CircularProgress } from '@mui/joy'
 import Box from '@mui/joy/Box'
 import Button from '@mui/joy/Button'
 import Checkbox from '@mui/joy/Checkbox'
@@ -17,13 +18,11 @@ import AuthApi from 'api/authApi'
 import { useAuth } from 'components/AuthProvider'
 import ColorSchemeToggle from 'components/ColorSchemeToggle'
 import { LoginModel } from 'models/Auth'
+import { useEffect, useState } from 'react'
+import { Controller, SubmitHandler, useForm } from 'react-hook-form'
 import { useNavigate } from 'react-router-dom'
-import React, { useEffect, useState } from 'react'
-import { CircularProgress } from '@mui/joy'
 import LocalStorageService from 'services/LocalStorageService'
 import StorageKeys from 'utils/storage-key'
-import { Controller, SubmitHandler, useForm } from 'react-hook-form'
-import { useSnackbar } from 'hooks/useSnackbar'
 
 export default function LoginPage() {
  const email = LocalStorageService.get(StorageKeys.EMAIL) || ''
@@ -32,7 +31,6 @@ export default function LoginPage() {
  const [loading, setLoading] = useState(false)
  const navigate = useNavigate()
  const auth = useAuth()
- const snackbar = useSnackbar()
 
  const { handleSubmit, register, control } = useForm({
   defaultValues: { email, password, persistent: persistent === 'true' },
@@ -57,7 +55,6 @@ export default function LoginPage() {
     navigate('/')
    })
    .catch((e: any) => {
-    snackbar.showSnackbar(e.message)
     setLoading(false)
    })
  }
