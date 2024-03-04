@@ -209,7 +209,12 @@ export default function Sidebar() {
             key={x.id}
             sx={{ mt: 0.5 }}
            >
-            <ListItemButton onClick={() => navigate(x.url)}>{x.name}</ListItemButton>
+            <ListItemButton
+             selected={pathname === x.url}
+             onClick={() => navigate(x.url)}
+            >
+             {x.name}
+            </ListItemButton>
            </ListItem>
           ))}
          </List>

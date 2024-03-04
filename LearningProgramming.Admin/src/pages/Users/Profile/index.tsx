@@ -9,19 +9,15 @@ import FormControl from '@mui/joy/FormControl'
 import FormLabel from '@mui/joy/FormLabel'
 import IconButton from '@mui/joy/IconButton'
 import Input from '@mui/joy/Input'
-import Option from '@mui/joy/Option'
-import Select from '@mui/joy/Select'
 import Stack from '@mui/joy/Stack'
 import Tab, { tabClasses } from '@mui/joy/Tab'
 import TabList from '@mui/joy/TabList'
 import Tabs from '@mui/joy/Tabs'
 import Typography from '@mui/joy/Typography'
 
-import AccessTimeFilledRoundedIcon from '@mui/icons-material/AccessTimeFilledRounded'
 import EditRoundedIcon from '@mui/icons-material/EditRounded'
 import EmailRoundedIcon from '@mui/icons-material/EmailRounded'
 import CustomBreadcrums from 'components/CustomBreadcrumbs'
-import CountrySelector from './components/CountrySelector'
 
 const ProfilePage = () => {
  const breadcrumbs = [
@@ -104,7 +100,6 @@ const ProfilePage = () => {
     <Card>
      <Box sx={{ mb: 1 }}>
       <Typography level='title-md'>Personal info</Typography>
-      <Typography level='body-sm'>Customize how your profile information will apper to the networks.</Typography>
      </Box>
      <Divider />
      <Stack
@@ -187,40 +182,9 @@ const ProfilePage = () => {
          />
         </FormControl>
        </Stack>
-       <div>
-        <CountrySelector />
-       </div>
-       <div>
-        <FormControl sx={{ display: { sm: 'contents' } }}>
-         <FormLabel>Timezone</FormLabel>
-         <Select
-          size='sm'
-          startDecorator={<AccessTimeFilledRoundedIcon />}
-          defaultValue='1'
-         >
-          <Option value='1'>
-           Indochina Time (Bangkok){' '}
-           <Typography
-            textColor='text.tertiary'
-            ml={0.5}
-           >
-            — GMT+07:00
-           </Typography>
-          </Option>
-          <Option value='2'>
-           Indochina Time (Ho Chi Minh City){' '}
-           <Typography
-            textColor='text.tertiary'
-            ml={0.5}
-           >
-            — GMT+07:00
-           </Typography>
-          </Option>
-         </Select>
-        </FormControl>
-       </div>
       </Stack>
      </Stack>
+
      <Stack
       direction='column'
       spacing={2}
@@ -307,39 +271,8 @@ const ProfilePage = () => {
         sx={{ flexGrow: 1 }}
        />
       </FormControl>
-      <div>
-       <CountrySelector />
-      </div>
-      <div>
-       <FormControl sx={{ display: { sm: 'contents' } }}>
-        <FormLabel>Timezone</FormLabel>
-        <Select
-         size='sm'
-         startDecorator={<AccessTimeFilledRoundedIcon />}
-         defaultValue='1'
-        >
-         <Option value='1'>
-          Indochina Time (Bangkok){' '}
-          <Typography
-           textColor='text.tertiary'
-           ml={0.5}
-          >
-           — GMT+07:00
-          </Typography>
-         </Option>
-         <Option value='2'>
-          Indochina Time (Ho Chi Minh City){' '}
-          <Typography
-           textColor='text.tertiary'
-           ml={0.5}
-          >
-           — GMT+07:00
-          </Typography>
-         </Option>
-        </Select>
-       </FormControl>
-      </div>
      </Stack>
+
      <CardOverflow sx={{ borderTop: '1px solid', borderColor: 'divider' }}>
       <CardActions sx={{ alignSelf: 'flex-end', pt: 2 }}>
        <Button

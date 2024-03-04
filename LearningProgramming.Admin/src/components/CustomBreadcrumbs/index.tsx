@@ -1,32 +1,38 @@
-import { default as ChevronRightRoundedIcon, default as HomeRoundedIcon } from '@mui/icons-material/ChevronRightRounded'
-import { Breadcrumbs, Typography } from '@mui/joy'
-import { Link } from 'react-router-dom'
+import ChevronRightRounded from '@mui/icons-material/ChevronRightRounded'
+import HomeRounded from '@mui/icons-material/HomeRounded'
+import { Breadcrumbs, Link, Typography } from '@mui/joy'
+import React from 'react'
+import { useNavigate } from 'react-router-dom'
 
 interface CustomBreadcrumsProps {
  data: any[]
 }
 
 const CustomBreadcrums = ({ data }: CustomBreadcrumsProps) => {
+ const navigate = useNavigate()
+
  return (
   <Breadcrumbs
    size='sm'
    aria-label='breadcrumbs'
-   separator={<ChevronRightRoundedIcon />}
+   separator={<ChevronRightRounded />}
    sx={{ pl: 0 }}
   >
    <Link
     color='neutral'
-    to='/'
+    underline='none'
+    onClick={() => navigate('/')}
    >
-    <HomeRoundedIcon />
+    <HomeRounded />
    </Link>
 
    {data.map((x, i) => (
-    <>
+    <React.Fragment key={i}>
      {i !== data.length - 1 && (
       <Link
+       underline='none'
        color='neutral'
-       to={x.to}
+       onClick={() => navigate(x.to)}
       >
        {x.name}
       </Link>
@@ -40,7 +46,7 @@ const CustomBreadcrums = ({ data }: CustomBreadcrumsProps) => {
        {x.name}
       </Typography>
      )}
-    </>
+    </React.Fragment>
    ))}
   </Breadcrumbs>
  )
