@@ -1,5 +1,6 @@
 using LearningProgramming.API.Middlewares;
 using LearningProgramming.Application;
+using LearningProgramming.Application.Hubs;
 using LearningProgramming.Identity;
 using LearningProgramming.Infrastructure;
 using LearningProgramming.Persistence;
@@ -13,6 +14,7 @@ builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
 
+builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
 
 builder.Services.AddControllers();
@@ -66,6 +68,8 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+app.MapHub<ChatHub>("/hub");
 
 app.UseHttpsRedirection();
 app.UseCors("all");
