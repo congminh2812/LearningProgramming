@@ -64,6 +64,14 @@ namespace LearningProgramming.Identity.Configurations
                         Url = "/navigation-menu",
                         Position = 3,
                     },
+                    new() {
+                        Id = 7,
+                        Name = "Messages",
+                        CreatedBy = 1,
+                        CreatedAt = DateTime.UtcNow,
+                        Url = "/messages",
+                        Position = 4,
+                    },
                 }
             );
         }

@@ -23,7 +23,8 @@ builder.Services.AddCors(options =>
 {
     options.AddPolicy("all", builder => builder.AllowAnyOrigin()
     .AllowAnyHeader()
-    .AllowAnyMethod());
+    .AllowAnyMethod()
+    .WithOrigins("*"));
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -58,6 +59,9 @@ builder.Services.AddSwaggerGen((c) =>
     });
 });
 
+builder.Logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Trace);
+builder.Logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Trace);
+
 var app = builder.Build();
 
 app.UseMiddleware<ExceptionMiddleware>();
@@ -69,7 +73,7 @@ if (app.Environment.IsDevelopment())
     app.UseSwaggerUI();
 }
 
-app.MapHub<ChatHub>("/hub");
+app.MapHub<ChatHub>("/hub/chatHub");
 
 app.UseHttpsRedirection();
 app.UseCors("all");
