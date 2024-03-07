@@ -39,6 +39,10 @@ namespace LearningProgramming.Identity.Configurations
                         RoleId = 1,
                         NavigationMenuId = 7
                     },
+                        new() {
+                        RoleId = 1,
+                        NavigationMenuId = 8
+                    },
                 }
             );
         }

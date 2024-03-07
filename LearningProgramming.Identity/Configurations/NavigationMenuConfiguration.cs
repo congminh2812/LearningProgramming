@@ -72,6 +72,14 @@ namespace LearningProgramming.Identity.Configurations
                         Url = "/messages",
                         Position = 4,
                     },
+                    new() {
+                        Id = 8,
+                        Name = "Messages",
+                        CreatedBy = 1,
+                        CreatedAt = DateTime.UtcNow,
+                        Url = "/messages",
+                        Position = 4,
+                    },
                 }
             );
         }

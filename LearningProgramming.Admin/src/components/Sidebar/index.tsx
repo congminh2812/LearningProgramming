@@ -26,6 +26,7 @@ import LocalStorageService from 'services/LocalStorageService'
 import { closeSidebar } from 'utils/sidebar'
 import StorageKeys from 'utils/storage-key'
 import { NavigationMenu } from 'models/NavigationMenu'
+import CurrencyBitcoinIcon from '@mui/icons-material/CurrencyBitcoin'
 
 function Toggler({
  defaultExpanded = false,
@@ -65,6 +66,8 @@ const IconMenu = (icon: string) => {
    return <GroupRoundedIcon />
   case 'navigation-menu':
    return <ListRoundedIcon />
+  case 'binance':
+   return <CurrencyBitcoinIcon />
   default:
    return <DashboardRoundedIcon />
  }

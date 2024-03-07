@@ -12,6 +12,7 @@ import { ToastContainer } from 'react-toastify'
 import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 import ListUserPage from 'pages/Users/ListUser'
+import BinancePage from 'pages/Binance'
 
 const router = createBrowserRouter([
  {
@@ -43,6 +44,10 @@ const router = createBrowserRouter([
    {
     path: '/navigation-menu',
     element: <NavigationMenuPage />,
+   },
+   {
+    path: '/binance',
+    element: <BinancePage />,
    },
   ],
  },
