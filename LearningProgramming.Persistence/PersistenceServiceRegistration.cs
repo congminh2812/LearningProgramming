@@ -26,6 +26,8 @@ namespace LearningProgramming.Persistence
             services.AddScoped<ILessonRepository, LessonRepository>();
             services.AddScoped<ILessonComponentRepository, LessonComponentRepository>();
             services.AddScoped<IUserProgressRepository, UserProgressRepository>();
+            services.AddScoped<IMessageRepository, MessageRepository>();
+            services.AddScoped<IAttachmentMessageRepository, AttachmentMessageRepository>();
 
             return services;
         }
