@@ -59,7 +59,9 @@ export const withErrorHandling = (apiMethod: any) => {
    return result
   } catch (error: any) {
    console.log(error)
-   toast.error(error.response.data.title)
+   if (error.response) toast.error(error.response.data.title)
+   else toast.error(error.message)
+
    throw error
   }
  }

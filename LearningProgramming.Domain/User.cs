@@ -30,7 +30,5 @@ namespace LearningProgramming.Domain
         public bool IsDeleted { get; set; }
 
         public UserLogin UserLogin { get; set; }
-
-        public List<Message> Messages { get; set; }
     }
 }
