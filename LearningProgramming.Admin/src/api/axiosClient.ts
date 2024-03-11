@@ -58,7 +58,8 @@ export const withErrorHandling = (apiMethod: any) => {
    const result = await apiMethod(...args)
    return result
   } catch (error: any) {
-   toast.error(error.message)
+   console.log(error)
+   toast.error(error.response.data.title)
    throw error
   }
  }

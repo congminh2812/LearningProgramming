@@ -10,11 +10,11 @@ namespace LearningProgramming.Persistence.Repositories
 {
     public class MessageRepository(LearningProgrammingAppDbContext context) : Repository<Message, LearningProgrammingAppDbContext>(context), IMessageRepository
     {
-        public async Task<List<ChatUsersResponse>> GetChatUsersByUserId(long userId)
+        public async Task<List<ChatUserResponse>> GetChatUsersByUserId(long userId)
         {
             var data = await context.Users.Include(x => x.Messages)
                 .Where(x => x.Id != userId)
-                .Select(x => new ChatUsersResponse
+                .Select(x => new ChatUserResponse
                 {
                     UserId = x.Id,
                     FullName = $"{x.FirstName} {x.LastName}",

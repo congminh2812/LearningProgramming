@@ -11,12 +11,12 @@ namespace LearningProgramming.API.Controllers
     public class MessageController(IMediator mediator) : BaseController
     {
         [HttpGet("getChatUsersByUserId")]
-        public async Task<ActionResult<IEnumerable<ChatUsersResponse>>> GetChatUsersByUserId()
+        public async Task<ActionResult<IEnumerable<ChatUserResponse>>> GetChatUsersByUserId()
         {
             var userId = User.GetUserId();
             var data = await mediator.Send(new GetMessagesByUserIdQuery(userId));
 
-            return Ok();
+            return Ok(data);
         }
 
         [HttpGet("getMessagesByUserId")]

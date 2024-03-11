@@ -2,7 +2,7 @@
 
 namespace LearningProgramming.Application.Models.Message
 {
-    public class ChatUsersResponse
+    public class ChatUserResponse
     {
         public long UserId { get; set; }
         public string FullName { get; set; }

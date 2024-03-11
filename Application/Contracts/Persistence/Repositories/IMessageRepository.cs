@@ -6,6 +6,6 @@ namespace LearningProgramming.Application.Contracts.Persistence.Repositories
 {
     public interface IMessageRepository : IRepository<Message>
     {
-        Task<List<ChatUsersResponse>> GetChatUsersByUserId(long userId);
+        Task<List<ChatUserResponse>> GetChatUsersByUserId(long userId);
     }
 }

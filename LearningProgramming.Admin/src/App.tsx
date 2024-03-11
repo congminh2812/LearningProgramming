@@ -13,6 +13,7 @@ import 'react-toastify/dist/ReactToastify.css'
 import './App.css'
 import ListUserPage from 'pages/Users/ListUser'
 import BinancePage from 'pages/Binance'
+import MessagePage from 'pages/Message'
 
 const router = createBrowserRouter([
  {
@@ -48,6 +49,10 @@ const router = createBrowserRouter([
    {
     path: '/binance',
     element: <BinancePage />,
+   },
+   {
+    path: '/messages',
+    element: <MessagePage />,
    },
   ],
  },
