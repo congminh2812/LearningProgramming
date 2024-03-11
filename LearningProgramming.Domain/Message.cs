@@ -5,8 +5,11 @@ namespace LearningProgramming.Domain
 {
     public class Message : BaseEntity
     {
-        [Column("user_id")]
-        public long UserId { get; set; }
+        [Column("receiver_id")]
+        public long ReceiverId { get; set; }
+
+        [Column("sender_id")]
+        public long SenderId { get; set; }
 
         [Column("content")]
         public string Content { get; set; }
@@ -17,7 +20,10 @@ namespace LearningProgramming.Domain
         [Column("unread")]
         public bool Unread { get; set; }
 
-        [ForeignKey(nameof(UserId))]
-        public User User { get; set; }
+        [ForeignKey(nameof(ReceiverId))]
+        public User Receiver { get; set; }
+
+        [ForeignKey(nameof(SenderId))]
+        public User Sender { get; set; }
     }
 }

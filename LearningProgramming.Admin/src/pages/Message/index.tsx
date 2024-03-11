@@ -5,9 +5,15 @@ import MessagesPane from './components/MessagesPane';
 import { ChatProps } from './type';
 import ChatsPane from './components/ChatsPane';
 import { chats } from './data';
+import messageApi from 'api/messageApi';
 
 export default function MessagePage() {
   const [selectedChat, setSelectedChat] = React.useState<ChatProps>(chats[0]);
+
+  React.useEffect(() => {
+    messageApi.getChatUsersByUserId()
+  }, [])
+
   return (
     <Sheet
       sx={{

@@ -1,10 +1,10 @@
 ﻿using LearningProgramming.Application.Contracts.Common;
 using LearningProgramming.Application.Contracts.Persistence.Repositories;
-using LearningProgramming.Application.Features.Message.Queries.GetMessages;
 using LearningProgramming.Application.Models.Message;
 using LearningProgramming.Domain;
 using LearningProgramming.Persistence.DBContext;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Internal;
 
 namespace LearningProgramming.Persistence.Repositories
 {
@@ -12,17 +12,26 @@ namespace LearningProgramming.Persistence.Repositories
     {
         public async Task<List<ChatUserResponse>> GetChatUsersByUserId(long userId)
         {
-            var data = await context.Users.Include(x => x.Messages)
-                .Where(x => x.Id != userId)
+            var data = await context.Users
+                .LeftJoin(context.Messages, user => user.Id, message => message.SenderId, (user, message) => new
+                {
+                    SenderId = user.Id,
+                    FullName = $"{user.FirstName} {user.LastName}",
+                    message.Unread,
+                    message.Content,
+                    message.CreatedDate,
+                    message.ReceiverId,
+                })
+                .Where(x => x.SenderId != userId)
+                .GroupBy(x => new { x.SenderId, x.FullName })
                 .Select(x => new ChatUserResponse
                 {
-                    UserId = x.Id,
-                    FullName = $"{x.FirstName} {x.LastName}",
-                    Message = x.Messages.OrderByDescending(x => x.CreatedDate).Select(d => new MessageDto
-                    {
-                        Content = d.Content,
-                        CreatedDate = d.CreatedDate,
-                    }).FirstOrDefault(),
+                    SenderId = x.Key.SenderId,
+                    FullName = x.Key.FullName,
+                    Unread = x.OrderByDescending(x => x.CreatedDate).Select(d => d.Unread).FirstOrDefault(),
+                    Content = x.OrderByDescending(x => x.CreatedDate).Select(d => d.Content).FirstOrDefault(),
+                    CreatedDate = x.OrderByDescending(x => x.CreatedDate).Select(d => d.CreatedDate).FirstOrDefault(),
+                    ReceiverId = x.OrderByDescending(x => x.CreatedDate).Select(d => d.ReceiverId).FirstOrDefault(),
                 }).ToListAsync();
 
             return data;

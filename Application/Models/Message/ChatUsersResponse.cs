@@ -1,11 +1,12 @@
-﻿using LearningProgramming.Application.Features.Message.Queries.GetMessages;
-
-namespace LearningProgramming.Application.Models.Message
+﻿namespace LearningProgramming.Application.Models.Message
 {
     public class ChatUserResponse
     {
-        public long UserId { get; set; }
+        public long ReceiverId { get; set; }
         public string FullName { get; set; }
-        public MessageDto Message { get; set; }
+        public string Content { get; set; }
+        public DateTime CreatedDate { get; set; }
+        public long SenderId { get; set; }
+        public bool Unread { get; set; }
     }
 }
