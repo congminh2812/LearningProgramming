@@ -1,13 +1,12 @@
-﻿using MediatR;
+﻿using LearningProgramming.Application.Features.Message.Queries.GetMessages;
+using MediatR;
 
 namespace LearningProgramming.Application.Features.Message.Commands.CreateMessage
 {
-    public class CreateMessageCommand : IRequest<Unit>
+    public class CreateMessageCommand : IRequest<MessageDto>
     {
-        public long UserId { get; set; }
+        public long SenderId { get; set; }
+        public long ReceiverId { get; set; }
         public string Content { get; set; }
-        public string Type { get; set; }
-        public string FileName { get; set; }
-        public long Size { get; set; }
     }
 }

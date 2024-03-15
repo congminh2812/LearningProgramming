@@ -3,7 +3,7 @@ using MediatR;
 
 namespace LearningProgramming.Application.Features.Message.Queries.GetChatUsersByUserId
 {
-    public record GetChatUsersByUserIdQuery(long UserId) : IRequest<List<ChatUserResponse>>
+    public record GetChatUsersByUserIdQuery(long UserId) : IRequest<List<ChatUserDto>>
     {
     }
 }

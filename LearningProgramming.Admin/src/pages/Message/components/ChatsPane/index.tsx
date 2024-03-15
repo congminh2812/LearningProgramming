@@ -1,24 +1,27 @@
-import * as React from 'react';
-import Stack from '@mui/joy/Stack';
-import Sheet from '@mui/joy/Sheet';
-import Typography from '@mui/joy/Typography';
-import { Box, Chip, IconButton, Input } from '@mui/joy';
-import List from '@mui/joy/List';
+import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import EditNoteRoundedIcon from '@mui/icons-material/EditNoteRounded';
 import SearchRoundedIcon from '@mui/icons-material/SearchRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
-import { ChatProps } from 'pages/Message/type';
+import { Box, Chip, IconButton, Input } from '@mui/joy';
+import List from '@mui/joy/List';
+import Sheet from '@mui/joy/Sheet';
+import Stack from '@mui/joy/Stack';
+import Typography from '@mui/joy/Typography';
+import { ChatUser } from 'models/Message';
 import { toggleMessagesPane } from 'pages/Message/utils';
 import ChatListItem from '../ChatListItem';
 
 type ChatsPaneProps = {
-  chats: ChatProps[];
-  setSelectedChat: (chat: ChatProps) => void;
-  selectedChatId: string;
+  chats: ChatUser[];
+  setReceiverId: (id: number) => void;
+  receiverId?: number;
 };
 
-export default function ChatsPane(props: ChatsPaneProps) {
-  const { chats, setSelectedChat, selectedChatId } = props;
+export default function ChatsPane({chats = [], setReceiverId, receiverId}: ChatsPaneProps) {
+  const countMessageUnread = chats.filter(x => x.unread).length
+  const handClick = (id: number) => {
+    setReceiverId(id)
+  }
+  
   return (
     <Sheet
       sx={{
@@ -47,7 +50,7 @@ export default function ChatsPane(props: ChatsPaneProps) {
               size="md"
               slotProps={{ root: { component: 'span' } }}
             >
-              4
+              {countMessageUnread === 0 ? '' : countMessageUnread}
             </Chip>
           }
           sx={{ mr: 'auto' }}
@@ -93,10 +96,10 @@ export default function ChatsPane(props: ChatsPaneProps) {
       >
         {chats.map((chat) => (
           <ChatListItem
-            key={chat.id}
-            {...chat}
-            setSelectedChat={setSelectedChat}
-            selectedChatId={selectedChatId}
+            key={chat.receiverId}
+            chatUser={chat}
+            selected={receiverId === chat.receiverId}
+            onClick={() => handClick(chat.receiverId)}
           />
         ))}
       </List>

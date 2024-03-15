@@ -6,9 +6,9 @@ using MediatR;
 
 namespace LearningProgramming.Application.Features.Message.Queries.GetChatUsersByUserId
 {
-    public class GetChatUsersByUserIdQueryHandler(IMessageRepository messageRepository, IAppLogger<GetChatUsersByUserIdQueryHandler> logger, IMapper mapper) : IRequestHandler<GetChatUsersByUserIdQuery, List<ChatUserResponse>>
+    public class GetChatUsersByUserIdQueryHandler(IMessageRepository messageRepository, IAppLogger<GetChatUsersByUserIdQueryHandler> logger, IMapper mapper) : IRequestHandler<GetChatUsersByUserIdQuery, List<ChatUserDto>>
     {
-        public async Task<List<ChatUserResponse>> Handle(GetChatUsersByUserIdQuery request, CancellationToken cancellationToken)
+        public async Task<List<ChatUserDto>> Handle(GetChatUsersByUserIdQuery request, CancellationToken cancellationToken)
         {
             var data = await messageRepository.GetChatUsersByUserId(request.UserId);
 

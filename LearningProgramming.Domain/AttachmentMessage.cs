@@ -3,6 +3,7 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LearningProgramming.Domain
 {
+    [Table(name: "attachment_messages", Schema = "app-service")]
     public class AttachmentMessage : BaseEntity
     {
         [Column("message_id")]

@@ -3,7 +3,8 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace LearningProgramming.Domain
 {
-    public class Message : BaseEntity
+    [Table(name: "messages", Schema = "app-service")]
+    public class Message : BaseEntity, IAuditable
     {
         [Column("receiver_id")]
         public long ReceiverId { get; set; }
@@ -14,8 +15,11 @@ namespace LearningProgramming.Domain
         [Column("content")]
         public string Content { get; set; }
 
-        [Column("created_date")]
-        public DateTime CreatedDate { get; set; }
+        [Column("created_at")]
+        public DateTime CreatedAt { get; set; }
+
+        [Column("updated_at")]
+        public DateTime? UpdatedAt { get; set; }
 
         [Column("unread")]
         public bool Unread { get; set; }

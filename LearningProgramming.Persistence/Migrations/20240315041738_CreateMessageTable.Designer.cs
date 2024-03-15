@@ -3,6 +3,7 @@ using System;
 using LearningProgramming.Persistence.DBContext;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 
@@ -11,9 +12,11 @@ using Npgsql.EntityFrameworkCore.PostgreSQL.Metadata;
 namespace LearningProgramming.Persistence.Migrations
 {
     [DbContext(typeof(LearningProgrammingAppDbContext))]
-    partial class LearningProgrammingAppDbContextModelSnapshot : ModelSnapshot
+    [Migration("20240315041738_CreateMessageTable")]
+    partial class CreateMessageTable
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -261,9 +264,9 @@ namespace LearningProgramming.Persistence.Migrations
                         .HasColumnType("text")
                         .HasColumnName("content");
 
-                    b.Property<DateTime>("CreatedAt")
+                    b.Property<DateTime>("CreatedDate")
                         .HasColumnType("timestamp with time zone")
-                        .HasColumnName("created_at");
+                        .HasColumnName("created_date");
 
                     b.Property<long>("ReceiverId")
                         .HasColumnType("bigint")
@@ -276,10 +279,6 @@ namespace LearningProgramming.Persistence.Migrations
                     b.Property<bool>("Unread")
                         .HasColumnType("boolean")
                         .HasColumnName("unread");
-
-                    b.Property<DateTime?>("UpdatedAt")
-                        .HasColumnType("timestamp with time zone")
-                        .HasColumnName("updated_at");
 
                     b.HasKey("Id");
 

@@ -1,3 +1,5 @@
+import StorageKeys from "utils/storage-key"
+
 export default class LocalStorageService {
  // Method to get data from local storage
  static get(key: string): string | null {
@@ -9,6 +11,16 @@ export default class LocalStorageService {
    return null
   }
  }
+
+ static getUserId(): number | undefined {
+    try {
+     const value = localStorage.getItem(StorageKeys.USER_ID)
+     return Number(value)
+    } catch (error) {
+     console.error('Error getting data from local storage:', error)
+     return undefined
+    }
+   }
 
  // Method to save data to local storage
  static set(key: string, value: string): void {
