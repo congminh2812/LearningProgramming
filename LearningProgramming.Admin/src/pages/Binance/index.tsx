@@ -1,17 +1,17 @@
-import { Sheet, Table, Typography } from '@mui/joy'
+import { Box, Sheet, Table, Typography } from '@mui/joy'
 import { Kline } from 'models/Kline'
-import { Order } from 'models/Order'
 import moment from 'moment'
 import { useEffect, useState } from 'react'
 import klineSocket from 'sockets/socket'
 import { TALib } from 'talib.ts'
 import OrderTable from './components/OrderTable'
 import binanceApi from 'api/binanceApi'
+import { BinanceOrder } from 'models/BinanceOrder'
 
 const BinancePage = () => {
  const [currentPrice, setCurrentPrice] = useState(0)
  const [klines, setKlines] = useState<Kline[]>([])
- const [orders, setOrders] = useState<Order[]>([])
+ const [orders, setOrders] = useState<BinanceOrder[]>([])
  const [isInterupt, setIsInterupt] = useState(false)
 
  useEffect(() => {
@@ -53,19 +53,26 @@ const BinancePage = () => {
  })
 
  useEffect(() => {
-  binanceApi.trade
-   .getAllOrders('SHIBUSDT')
+  binanceApi
+   .getAllOrders('SHIBUSDT', 10)
    .then((res) => {
     if (res.length > 0) setOrders(res)
+   })
+   .catch(() => {})
+
+  binanceApi
+   .getAccountInformation()
+   .then((res) => {
+    console.log(res)
    })
    .catch(() => {})
  }, [])
 
  return (
-  <>
+  <Box sx={{ p: 3 }}>
    <Typography color='warning'>Current price (SHIBA): {currentPrice} USDT</Typography>
    <OrderTable orders={orders} />
-  </>
+  </Box>
  )
 }
 

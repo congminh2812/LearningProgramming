@@ -1,9 +1,11 @@
 import { Sheet, Table } from '@mui/joy'
-import { Order } from 'models/Order'
-import React from 'react'
+import { BinanceOrder } from 'models/BinanceOrder'
+import Constants from 'utils/constants'
+import { dateFormat } from 'utils/date-format'
+import { numberToText } from 'utils/number-format'
 
 interface OrderTableProps {
- orders: Order[]
+ orders: BinanceOrder[]
 }
 const OrderTable = ({ orders }: OrderTableProps) => {
  return (
@@ -21,15 +23,17 @@ const OrderTable = ({ orders }: OrderTableProps) => {
       <th>Side</th>
       <th>Price</th>
       <th>Quantity</th>
+      <th>Time</th>
      </tr>
     </thead>
     <tbody>
      {orders.map((o) => (
-      <tr key={o.orderId}>
-       <td>{o.type}</td>
-       <td>{o.side}</td>
+      <tr key={o.clientOrderId}>
+       <td>{Constants.BinanceTypes[Number(o.type)]}</td>
+       <td>{Constants.BinanceSides[Number(o.side)]}</td>
        <td>{o.price}</td>
-       <td>{o.quantity}</td>
+       <td>{numberToText(o.quantity)}</td>
+       <td>{dateFormat(o.createTime, 'DD/MM/YYYY HH:mm')}</td>
       </tr>
      ))}
     </tbody>

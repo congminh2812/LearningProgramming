@@ -1,3 +1,5 @@
+using Binance.Net.Clients;
+using CryptoExchange.Net.Authentication;
 using LearningProgramming.API.Middlewares;
 using LearningProgramming.Application;
 using LearningProgramming.Application.Hubs;
@@ -61,6 +63,16 @@ builder.Services.AddSwaggerGen((c) =>
 
 builder.Logging.AddFilter("Microsoft.AspNetCore.SignalR", LogLevel.Trace);
 builder.Logging.AddFilter("Microsoft.AspNetCore.Http.Connections", LogLevel.Trace);
+builder.Services.AddBinance();
+
+BinanceRestClient.SetDefaultOptions(options =>
+{
+    options.ApiCredentials = new ApiCredentials("zDdwOxGa4T0qPPRwByAMX7pBUu8NMhVIIhxM5NTmcUQmAGiPj7CkS2zvKCuOaIvY", "QJMJq3njgepA7WiN3Fae7CeFld3bJFELWQrmgpk3kmd2SOSrZOYWkcbxOSrevFqx");
+});
+BinanceSocketClient.SetDefaultOptions(options =>
+{
+    options.ApiCredentials = new ApiCredentials("zDdwOxGa4T0qPPRwByAMX7pBUu8NMhVIIhxM5NTmcUQmAGiPj7CkS2zvKCuOaIvY", "QJMJq3njgepA7WiN3Fae7CeFld3bJFELWQrmgpk3kmd2SOSrZOYWkcbxOSrevFqx");
+});
 
 var app = builder.Build();
 

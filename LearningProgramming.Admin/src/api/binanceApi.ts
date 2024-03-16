@@ -1,4 +1,4 @@
-import { withErrorHandling } from './axiosClient'
+import axiosClient, { withErrorHandling } from './axiosClient'
 import axiosClientBinance from './axiosClientBinance'
 
 const binanceApi = {
@@ -24,6 +24,18 @@ const binanceApi = {
    return data
   }),
  },
+
+ getAllOrders: withErrorHandling(async (symbol: string, limit: number) => {
+  var response = await axiosClient.get(`/Binance/getAllOrders?symbol=${symbol}&limit=${limit}`)
+
+  return response.data
+ }),
+
+ getAccountInformation: withErrorHandling(async () => {
+  var response = await axiosClient.get(`/Binance/getAccountInformation`)
+
+  return response.data
+ }),
 }
 
 export default binanceApi
