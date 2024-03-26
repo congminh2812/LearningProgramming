@@ -1,76 +1,71 @@
-import { Box, Sheet, Table, Typography } from '@mui/joy'
-import { Kline } from 'models/Kline'
-import moment from 'moment'
-import { useEffect, useState } from 'react'
-import klineSocket from 'sockets/socket'
-import { TALib } from 'talib.ts'
-import OrderTable from './components/OrderTable'
+import { Box, Chip } from '@mui/joy'
 import binanceApi from 'api/binanceApi'
+import binanceHub from 'hubs/binance-hub'
+import { Balance } from 'models/AccountInformation'
 import { BinanceOrder } from 'models/BinanceOrder'
+import { useEffect, useState } from 'react'
+import AccountInformation from './components/AccountInformation'
+import OrderTable from './components/OrderTable'
 
 const BinancePage = () => {
- const [currentPrice, setCurrentPrice] = useState(0)
- const [klines, setKlines] = useState<Kline[]>([])
+ const [price, setPrice] = useState<number>(0)
  const [orders, setOrders] = useState<BinanceOrder[]>([])
- const [isInterupt, setIsInterupt] = useState(false)
-
- useEffect(() => {
-  klineSocket.onmessage = (event) => {
-   const data = JSON.parse(event.data)
-   const first = klines[0]
-   const newKline = { openTime: data.k.t, closePrice: data.k.c }
-
-   if (!first || first.openTime !== newKline.openTime) {
-    klines.unshift(newKline)
-    // const newKlines = [newKline, ...klines]
-    if (klines.length >= 34) {
-     klines.pop()
-
-     const sma13 = TALib.sma(klines.map((x) => Number(x.closePrice)).slice(0, 13), 13)
-     const sma34 = TALib.sma(klines.map((x) => Number(x.closePrice)).slice(0, 34), 34)
-
-     console.log(sma13.sma.getValue()[12]?.toFixed(8), sma34.sma.getValue()[33]?.toFixed(8))
-
-     const number1 = Number(sma13.sma.getValue()[12]?.toFixed(8))
-     const number2 = Number(sma13.sma.getValue()[33]?.toFixed(8))
-
-     if (number1 === number2) setIsInterupt(true)
-
-     if (isInterupt) {
-      if (number1 > number2) {
-       // order buy coin
-      } else {
-       // order sell coin
-      }
-     }
-    }
-
-    setKlines([...klines])
-   }
-
-   setCurrentPrice(data.k.c)
-  }
- })
+ const [balances, setBalances] = useState<Balance[]>([])
+ const [refreshAcountInfo, setRefreshAccountInfo] = useState<boolean>(false)
 
  useEffect(() => {
   binanceApi
-   .getAllOrders('SHIBUSDT', 10)
+   .getAllOrders('BOMEUSDT', 10)
    .then((res) => {
     if (res.length > 0) setOrders(res)
    })
    .catch(() => {})
+ }, [])
 
+ useEffect(() => {
   binanceApi
    .getAccountInformation()
    .then((res) => {
-    console.log(res)
+    if (res) setBalances(res.balances)
    })
    .catch(() => {})
+ }, [refreshAcountInfo])
+
+ useEffect(() => {
+  binanceHub.init()
+  binanceHub.onOrder((order: any) => {
+   if (order) {
+    const newOrder: BinanceOrder = {
+     side: order.side,
+     price: order.price,
+     quantity: order.quantity,
+     createTime: order.createTime,
+    }
+    setOrders((o) => [newOrder, ...o.filter((_, i) => (o.length === 10 && i !== o.length - 1) || o.length < 10)])
+    setRefreshAccountInfo((v) => !v)
+   }
+  })
+
+  binanceHub.onPrices((kline: any) => {
+   if (kline) {
+    setPrice(kline.closePrice)
+   }
+  })
+
+  return () => {
+   binanceHub.onStop()
+  }
  }, [])
 
  return (
   <Box sx={{ p: 3 }}>
-   <Typography color='warning'>Current price (SHIBA): {currentPrice} USDT</Typography>
+   <AccountInformation balances={balances} />
+   <Chip
+    variant='outlined'
+    sx={{ mt: 1 }}
+   >
+    BOME: {price}
+   </Chip>
    <OrderTable orders={orders} />
   </Box>
  )

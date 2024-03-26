@@ -3,6 +3,7 @@ using CryptoExchange.Net.Authentication;
 using LearningProgramming.API.Middlewares;
 using LearningProgramming.Application;
 using LearningProgramming.Application.Hubs;
+using LearningProgramming.Application.Workers;
 using LearningProgramming.Identity;
 using LearningProgramming.Infrastructure;
 using LearningProgramming.Persistence;
@@ -11,10 +12,11 @@ using Microsoft.OpenApi.Models;
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
-builder.Services.AddApplicationServices();
 builder.Services.AddIdentityServices(builder.Configuration);
 builder.Services.AddPersistenceServices(builder.Configuration);
 builder.Services.AddInfrastructureServices(builder.Configuration);
+builder.Services.AddApplicationServices();
+builder.Services.AddHostedService<TradeWorker>();
 
 builder.Services.AddSignalR();
 builder.Services.AddHttpContextAccessor();
@@ -23,10 +25,10 @@ builder.Services.AddControllers();
 
 builder.Services.AddCors(options =>
 {
-    options.AddPolicy("all", builder => builder.AllowAnyOrigin()
+    options.AddPolicy("AllowSpecificOrigin", builder => builder.WithOrigins("http://localhost:3000")
+    .AllowCredentials()
     .AllowAnyHeader()
     .AllowAnyMethod());
-    //.WithOrigins("*"));
 });
 
 // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
@@ -67,11 +69,11 @@ builder.Services.AddBinance();
 
 BinanceRestClient.SetDefaultOptions(options =>
 {
-    options.ApiCredentials = new ApiCredentials("zDdwOxGa4T0qPPRwByAMX7pBUu8NMhVIIhxM5NTmcUQmAGiPj7CkS2zvKCuOaIvY", "QJMJq3njgepA7WiN3Fae7CeFld3bJFELWQrmgpk3kmd2SOSrZOYWkcbxOSrevFqx");
+    options.ApiCredentials = new ApiCredentials("nFOd9ip3Gwp4WkbI6r7XK2fLVsuZ3q1ehCEaGKWCUM9fc89qVgvYzWLqqmVFS1OA", "KEdgyIpvQTC15cXgFAnxQWDWAURYLlM2vJXgnKYgKBG1wagrnCLh0EzJNcROaXUS");
 });
 BinanceSocketClient.SetDefaultOptions(options =>
 {
-    options.ApiCredentials = new ApiCredentials("zDdwOxGa4T0qPPRwByAMX7pBUu8NMhVIIhxM5NTmcUQmAGiPj7CkS2zvKCuOaIvY", "QJMJq3njgepA7WiN3Fae7CeFld3bJFELWQrmgpk3kmd2SOSrZOYWkcbxOSrevFqx");
+    options.ApiCredentials = new ApiCredentials("nFOd9ip3Gwp4WkbI6r7XK2fLVsuZ3q1ehCEaGKWCUM9fc89qVgvYzWLqqmVFS1OA", "KEdgyIpvQTC15cXgFAnxQWDWAURYLlM2vJXgnKYgKBG1wagrnCLh0EzJNcROaXUS");
 });
 
 var app = builder.Build();
@@ -79,16 +81,17 @@ var app = builder.Build();
 app.UseMiddleware<ExceptionMiddleware>();
 
 // Configure the HTTP request pipeline.
-if (app.Environment.IsDevelopment())
+//if (app.Environment.IsDevelopment())
 {
     app.UseSwagger();
     app.UseSwaggerUI();
 }
 
 app.MapHub<ChatHub>("/hub/chatHub");
+app.MapHub<BinanceHub>("/hub/binanceHub");
 
 app.UseHttpsRedirection();
-app.UseCors("all");
+app.UseCors("AllowSpecificOrigin");
 
 app.UseAuthentication();
 app.UseAuthorization();
