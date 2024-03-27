@@ -17,13 +17,12 @@ namespace LearningProgramming.Application.Workers
         private readonly IBinanceSocketClientSpotApiTrading _binanceSocketClientSpotApiTrading = binanceSocketClient.SpotApi.Trading;
         private readonly IBinanceSocketClientSpotApiAccount _binanceSocketClientSpotApiAccount = binanceSocketClient.SpotApi.Account;
 
-        private const int ROUND = 8;
+        private const int ROUND = 6;
         private const int EVERY_TIME_BUY_USDT = 20;
-        private const int KLINE_LIMIT = 40;
+        private const int KLINE_LIMIT = 55;
         private const KlineInterval KLINE_INTERVAL = KlineInterval.FiveMinutes;
         private const string ASSET = "BOME";
         private const string QUOTE_ASSET = "USDT";
-        private decimal _buyPriceLatest = 0;
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -35,10 +34,14 @@ namespace LearningProgramming.Application.Workers
             await _binanceSocketClientSpotApiExchangeData.SubscribeToKlineUpdatesAsync($"{ASSET}{QUOTE_ASSET}", KLINE_INTERVAL, (response) =>
             {
                 var data = response.Data.Data;
-                SendPricesToClient(new BinanceSpotKline { ClosePrice = data.ClosePrice }).ConfigureAwait(false);
+                //SendPricesToClient(new BinanceSpotKline { ClosePrice = data.ClosePrice }).ConfigureAwait(false);
 
                 //if (_buyPriceLatest > 0 && (data.ClosePrice > (_buyPriceLatest + _buyPriceLatest * (decimal)0.01)))
                 //    Sell().ConfigureAwait(true);
+
+                IList<double> listPrice = klines.Select(x => (double)Math.Round(x.ClosePrice, ROUND)).ToList();
+                var listEMA50 = listPrice.ExponentialMovingAverages(x => x, 50, 5).Select(x => Math.Round(x, ROUND)).ToList();
+                ExecuteStrategy(listEMA50.Last(), (double)klines[^2].OpenPrice, (double)klines[^2].ClosePrice, (double)data.ClosePrice);
 
                 var last = klines.Last();
 
@@ -46,7 +49,7 @@ namespace LearningProgramming.Application.Workers
                 {
                     klines.RemoveAt(0);
                     klines.Add(new BinanceSpotKline { ClosePrice = data.ClosePrice, OpenTime = data.OpenTime });
-                    CalSMA(klines).ConfigureAwait(true);
+                    //CalSMA(klines).ConfigureAwait(true);
                 }
                 else
                 {
@@ -87,7 +90,6 @@ namespace LearningProgramming.Application.Workers
 
             if (data.Data is not null)
             {
-                _buyPriceLatest = data.Data.Result.Price;
                 await SendOrderToClient(data.Data.Result);
             }
         }
@@ -106,7 +108,6 @@ namespace LearningProgramming.Application.Workers
                 if (data.Data is not null)
                 {
                     await SendOrderToClient(data.Data.Result);
-                    _buyPriceLatest = 0;
                 }
             }
         }
@@ -122,5 +123,76 @@ namespace LearningProgramming.Application.Workers
             foreach (var connectionId in BinanceHub.ConnectedUsers.Values)
                 await binanceHubContext.Clients.Client(connectionId).SendPricesToClient(spotKline);
         }
+
+        // Tôi có giá mở cửa và đóng cửa của 1 cây nến gần nhất gọi là openPrice và closePrice
+
+        // trường hợp 1: openPrice < EMA và closePrice < EMA
+        // giá hiện tại dưới 2% của đường EMA -> buy lần 1
+        // giá hiện tại dưới 1% của giá mua lần 1 -> buy lần 2
+        // giá hiện tại dưới 1% của giá mua lần 2 -> buy lần 3
+        // giá chạm đường EMA -> sell
+
+        // trường hợp 2: openPrice > EMA và closePrice > EMA
+        // giá hiện tại = EMA -> buy
+        // giá hiện tại lên 2% so với buy lần 1 -> sell
+        // ngược lại giá hiện tại nằm dưới EMA 1% -> sell
+
+
+        public void ExecuteStrategy(double emaValue, double openPrice, double closePrice, double currentPrice)
+        {
+            // Calculate 1% and 2% of the EMA value
+            double onePercentOfEma = emaValue * 0.01;
+            double twoPercentOfEma = emaValue * 0.02;
+
+            // Check if openPrice and closePrice are both below the EMA
+            bool isBothPricesBelowEma = openPrice < emaValue && closePrice < emaValue;
+
+            // Check if openPrice and closePrice are both above the EMA
+            bool isBothPricesAboveEma = openPrice > emaValue && closePrice > emaValue;
+
+            // Determine the strategy based on the conditions
+            if (isBothPricesBelowEma)
+            {
+                // Check if the current price is below 2% of the EMA
+                if (currentPrice < emaValue - twoPercentOfEma)
+                {
+                    // Execute buy logic
+                    Console.WriteLine("Buy lần 1");
+                }
+
+                // Implement similar conditions for buy lần 2 and buy lần 3
+
+                // Check if the current price touches the EMA
+                if (currentPrice >= emaValue)
+                {
+                    // Execute sell logic
+                    Console.WriteLine("Sell");
+                }
+            }
+            else if (isBothPricesAboveEma)
+            {
+                // Check if the current price equals the EMA
+                if (currentPrice <= emaValue)
+                {
+                    // Execute buy logic
+                    Console.WriteLine("Buy");
+                }
+
+                // Check if the current price is above 2% of the EMA
+                else if (currentPrice > emaValue + twoPercentOfEma)
+                {
+                    // Execute sell logic
+                    Console.WriteLine("Sell");
+                }
+
+                // Implement condition for when the current price is below the EMA by 2%
+                else if (currentPrice < emaValue * 0.98)
+                {
+                    // Execute sell logic
+                    Console.WriteLine("Sell");
+                }
+            }
+        }
+
     }
 }
