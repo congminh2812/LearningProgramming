@@ -23,6 +23,8 @@ namespace LearningProgramming.Application.Workers
         private const KlineInterval KLINE_INTERVAL = KlineInterval.FiveMinutes;
         private const string ASSET = "BOME";
         private const string QUOTE_ASSET = "USDT";
+        private BinanceAccountInfo BinanceAccountInfo { get; set; }
+        private bool Bought { get; set; }
 
         protected override async Task ExecuteAsync(CancellationToken stoppingToken)
         {
@@ -30,6 +32,8 @@ namespace LearningProgramming.Application.Workers
 
             var streamKlines = await _binanceSocketClientSpotApiExchangeData.GetKlinesAsync($"{ASSET}{QUOTE_ASSET}", KLINE_INTERVAL, limit: KLINE_LIMIT);
             var klines = streamKlines.Data.Result.ToList();
+            var accountInfo = await _binanceSocketClientSpotApiAccount.GetAccountInfoAsync();
+            BinanceAccountInfo = accountInfo.Data.Result;
 
             await _binanceSocketClientSpotApiExchangeData.SubscribeToKlineUpdatesAsync($"{ASSET}{QUOTE_ASSET}", KLINE_INTERVAL, (response) =>
             {
@@ -41,7 +45,7 @@ namespace LearningProgramming.Application.Workers
 
                 IList<double> listPrice = klines.Select(x => (double)Math.Round(x.ClosePrice, ROUND)).ToList();
                 var listEMA50 = listPrice.ExponentialMovingAverages(x => x, 50, 5).Select(x => Math.Round(x, ROUND)).ToList();
-                ExecuteStrategy(listEMA50.Last(), (double)klines[^2].OpenPrice, (double)klines[^2].ClosePrice, (double)data.ClosePrice);
+                ExecuteStrategy(listEMA50.Last(), (double)klines[^2].OpenPrice, (double)klines[^2].ClosePrice, (double)data.ClosePrice).ConfigureAwait(true);
 
                 var last = klines.Last();
 
@@ -50,6 +54,8 @@ namespace LearningProgramming.Application.Workers
                     klines.RemoveAt(0);
                     klines.Add(new BinanceSpotKline { ClosePrice = data.ClosePrice, OpenTime = data.OpenTime });
                     //CalSMA(klines).ConfigureAwait(true);
+                    var accountInfo = _binanceSocketClientSpotApiAccount.GetAccountInfoAsync().Result;
+                    BinanceAccountInfo = accountInfo.Data.Result;
                 }
                 else
                 {
@@ -85,28 +91,34 @@ namespace LearningProgramming.Application.Workers
 
         private async Task Buy()
         {
-            var data = await _binanceSocketClientSpotApiTrading.PlaceOrderAsync($"{ASSET}{QUOTE_ASSET}", OrderSide.Buy, SpotOrderType.Market, quoteQuantity: EVERY_TIME_BUY_USDT);
-            logger.LogInformation($"{DateTimeOffset.Now} - BUY");
-
-            if (data.Data is not null)
+            var balance = BinanceAccountInfo.Balances.FirstOrDefault(x => x.Asset == QUOTE_ASSET);
+            if (balance is not null && (int)balance.Available >= EVERY_TIME_BUY_USDT && !Bought)
             {
-                await SendOrderToClient(data.Data.Result);
+                var data = await _binanceSocketClientSpotApiTrading.PlaceOrderAsync($"{ASSET}{QUOTE_ASSET}", OrderSide.Buy, SpotOrderType.Market, quoteQuantity: EVERY_TIME_BUY_USDT);
+                logger.LogInformation($"{DateTimeOffset.Now} - BUY");
+
+                if (data.Data is not null)
+                {
+                    Bought = true;
+                    await SendOrderToClient(data.Data.Result);
+                }
             }
+
         }
 
         private async Task Sell()
         {
-            var accountInfo = await _binanceSocketClientSpotApiAccount.GetAccountInfoAsync();
-            var balances = accountInfo.Data.Result.Balances;
-            var balanceSHIB = balances.FirstOrDefault(x => x.Asset == ASSET);
+            var balances = BinanceAccountInfo.Balances;
+            var balance = balances.FirstOrDefault(x => x.Asset == ASSET);
 
-            if (balanceSHIB is not null)
+            if (balance is not null && (int)balance.Available > 0)
             {
-                var data = await _binanceSocketClientSpotApiTrading.PlaceOrderAsync($"{ASSET}{QUOTE_ASSET}", OrderSide.Sell, SpotOrderType.Market, quantity: (int)balanceSHIB.Available);
-                logger.LogInformation($"{DateTimeOffset.Now} - SELL: {balanceSHIB.Available}");
+                var data = await _binanceSocketClientSpotApiTrading.PlaceOrderAsync($"{ASSET}{QUOTE_ASSET}", OrderSide.Sell, SpotOrderType.Market, quantity: (int)balance.Available);
+                logger.LogInformation($"{DateTimeOffset.Now} - SELL: {balance.Available}");
 
                 if (data.Data is not null)
                 {
+                    Bought = false;
                     await SendOrderToClient(data.Data.Result);
                 }
             }
@@ -138,7 +150,7 @@ namespace LearningProgramming.Application.Workers
         // ngược lại giá hiện tại nằm dưới EMA 1% -> sell
 
 
-        public void ExecuteStrategy(double emaValue, double openPrice, double closePrice, double currentPrice)
+        public async Task ExecuteStrategy(double emaValue, double openPrice, double closePrice, double currentPrice)
         {
             // Calculate 1% and 2% of the EMA value
             double onePercentOfEma = emaValue * 0.01;
@@ -156,8 +168,7 @@ namespace LearningProgramming.Application.Workers
                 // Check if the current price is below 2% of the EMA
                 if (currentPrice < emaValue - twoPercentOfEma)
                 {
-                    // Execute buy logic
-                    Console.WriteLine("Buy lần 1");
+                    await Buy();
                 }
 
                 // Implement similar conditions for buy lần 2 and buy lần 3
@@ -165,8 +176,7 @@ namespace LearningProgramming.Application.Workers
                 // Check if the current price touches the EMA
                 if (currentPrice >= emaValue)
                 {
-                    // Execute sell logic
-                    Console.WriteLine("Sell");
+                    await Sell();
                 }
             }
             else if (isBothPricesAboveEma)
@@ -174,22 +184,19 @@ namespace LearningProgramming.Application.Workers
                 // Check if the current price equals the EMA
                 if (currentPrice <= emaValue)
                 {
-                    // Execute buy logic
-                    Console.WriteLine("Buy");
+                    await Buy();
                 }
 
                 // Check if the current price is above 2% of the EMA
                 else if (currentPrice > emaValue + twoPercentOfEma)
                 {
-                    // Execute sell logic
-                    Console.WriteLine("Sell");
+                    await Sell();
                 }
 
                 // Implement condition for when the current price is below the EMA by 2%
                 else if (currentPrice < emaValue * 0.98)
                 {
-                    // Execute sell logic
-                    Console.WriteLine("Sell");
+                    await Sell();
                 }
             }
         }
